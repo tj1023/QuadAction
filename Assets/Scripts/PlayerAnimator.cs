@@ -8,6 +8,8 @@ public class PlayerAnimator : MonoBehaviour
     private readonly int _dodgeHash = Animator.StringToHash("DoDodge");
     private readonly int _swapHash = Animator.StringToHash("DoSwap");
 
+    private const int UpperBodyLayerIndex = 1;
+    
     private void Awake()
     {
         _animator = GetComponentInChildren<Animator>();
@@ -22,9 +24,25 @@ public class PlayerAnimator : MonoBehaviour
     {
         _animator.SetTrigger(_dodgeHash);
     }
-    
-    public void TriggerSwap()
+
+    public void ForceRestartSwap()
     {
-        _animator.SetTrigger(_swapHash);
+        if (_animator.layerCount > UpperBodyLayerIndex)
+        {
+            _animator.Play("Swap", UpperBodyLayerIndex, 0f);
+        }
+    }
+
+    public void ResetTriggers()
+    {
+        _animator.ResetTrigger(_swapHash);
+    }
+    
+    public void SetUpperBodyWeight(float weight)
+    {
+        if (_animator.layerCount > UpperBodyLayerIndex)
+        {
+            _animator.SetLayerWeight(UpperBodyLayerIndex, weight);
+        }
     }
 }

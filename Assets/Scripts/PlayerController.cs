@@ -144,18 +144,11 @@ public class PlayerController : MonoBehaviour
     
     private void OnSwapWeapon(InputAction.CallbackContext context)
     {
-        if (_weaponManager == null) return;
+        if (_isDodging || _weaponManager == null) return;
         
         float scrollValue = context.ReadValue<Vector2>().y;
-
-        if (scrollValue > 0)
-        {
-            _weaponManager.SwapWeapon(1);
-        }
-        else if (scrollValue < 0)
-        {
-            _weaponManager.SwapWeapon(-1);
-        }
+        if (scrollValue > 0) _weaponManager.SwapWeapon(1);
+        else if (scrollValue < 0) _weaponManager.SwapWeapon(-1);
     }
     
     private void StartDodge()
@@ -163,12 +156,20 @@ public class PlayerController : MonoBehaviour
         _isDodging = true;
         _nextDodgeTime = Time.time + dodgeCooldown;
         _hasQueuedMove = false;
-        _animator?.TriggerDodge();
+
+        if (_animator)
+        {
+            _animator.ResetTriggers();
+            _animator.SetUpperBodyWeight(0f);
+            _animator.TriggerDodge();
+        }
     }
 
     public void EndDodge()
     {
         _isDodging = false; 
+        
+        _animator?.SetUpperBodyWeight(1f);
         
         if (_hasQueuedMove)
         {

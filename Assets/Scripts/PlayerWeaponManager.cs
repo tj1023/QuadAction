@@ -10,6 +10,12 @@ public class PlayerWeaponManager : MonoBehaviour
     private GameObject _currentWeaponObject;
     private WeaponData _currentWeaponData;
     private int _currentWeaponIndex = -1;
+    private PlayerAnimator _animator;
+
+    private void Awake()
+    {
+        _animator = GetComponent<PlayerAnimator>();
+    }
 
     public void AddWeapon(WeaponData newWeapon)
     {
@@ -72,6 +78,7 @@ public class PlayerWeaponManager : MonoBehaviour
         else if (newIndex < 0)
             newIndex = _ownedWeapons.Count - 1;
         
+        _animator.ForceRestartSwap();
         EquipWeapon(_ownedWeapons[newIndex]);
     }
 }
