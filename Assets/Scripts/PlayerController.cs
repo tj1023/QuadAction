@@ -9,6 +9,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private InputActionReference moveAction;
     [SerializeField] private InputActionReference dodgeAction;
     [SerializeField] private InputActionReference interactAction;
+    [SerializeField] private InputActionReference swapAction;
+
     
     [Header("Movement Settings")]
     [SerializeField] private LayerMask groundLayer;
@@ -23,6 +25,7 @@ public class PlayerController : MonoBehaviour
     private Animator _animator;
     private Camera _mainCamera;
     private PlayerInteraction _playerInteraction;
+    private PlayerWeaponManager _weaponManager;
     
     private float _nextDodgeTime;
     private float _dodgeTimer;
@@ -38,6 +41,7 @@ public class PlayerController : MonoBehaviour
         _animator = GetComponentInChildren<Animator>();
         _mainCamera = Camera.main;
         _playerInteraction = GetComponent<PlayerInteraction>();
+        _weaponManager = GetComponent<PlayerWeaponManager>();
         
         _agent.speed = speed;
         _agent.acceleration = 200f;
@@ -54,6 +58,9 @@ public class PlayerController : MonoBehaviour
         
         interactAction.action.Enable();
         interactAction.action.performed += OnInteract;
+        
+        swapAction.action.Enable();
+        swapAction.action.performed += OnSwapWeapon;
     }
 
     private void OnDisable()
@@ -68,7 +75,7 @@ public class PlayerController : MonoBehaviour
 
         if (_isDodging)
         {
-            // 목표 지점까지 걷게 하는 대신, 지정된 방향으로 매 프레임 강제 이동시킵니다.
+            // 목표 지점까지 걷게 하는 대신, 지정된 방향으로 매 프레임 강제 이동
             float currentDodgeSpeed = speed * dodgeSpeedMultiplier;
             _agent.Move(_dodgeDirection * (currentDodgeSpeed * Time.deltaTime));
 
@@ -116,6 +123,22 @@ public class PlayerController : MonoBehaviour
     {
         if(_playerInteraction == null) return;
         _playerInteraction.PickupClosestItem();
+    }
+    
+    private void OnSwapWeapon(InputAction.CallbackContext context)
+    {
+        if (_weaponManager == null) return;
+        
+        float scrollValue = context.ReadValue<Vector2>().y;
+
+        if (scrollValue > 0)
+        {
+            _weaponManager.SwapWeapon(1);
+        }
+        else if (scrollValue < 0)
+        {
+            _weaponManager.SwapWeapon(-1);
+        }
     }
     
     private void StartDodge()

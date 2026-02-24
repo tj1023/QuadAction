@@ -9,6 +9,7 @@ public class PlayerWeaponManager : MonoBehaviour
     private readonly Dictionary<WeaponData, GameObject> _weaponInstances = new Dictionary<WeaponData, GameObject>();
     private GameObject _currentWeaponObject;
     private WeaponData _currentWeaponData;
+    private int _currentWeaponIndex = -1;
 
     public void AddWeapon(WeaponData newWeapon)
     {
@@ -56,6 +57,21 @@ public class PlayerWeaponManager : MonoBehaviour
 
         // 3. 현재 무기 데이터 갱신
         _currentWeaponData = weaponData;
+        _currentWeaponIndex = _ownedWeapons.IndexOf(weaponData);
         Debug.Log($"무기 장착 완료: {_currentWeaponData.weaponName}");
+    }
+
+    public void SwapWeapon(int direction)
+    {
+        if(_ownedWeapons.Count <= 1) return;
+        
+        int newIndex = _currentWeaponIndex + direction;
+
+        if (newIndex >= _ownedWeapons.Count)
+            newIndex = 0;
+        else if (newIndex < 0)
+            newIndex = _ownedWeapons.Count - 1;
+        
+        EquipWeapon(_ownedWeapons[newIndex]);
     }
 }

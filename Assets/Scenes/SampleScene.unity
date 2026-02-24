@@ -246,6 +246,7 @@ MonoBehaviour:
   moveAction: {fileID: 362170616}
   dodgeAction: {fileID: 2052013658}
   interactAction: {fileID: 1471823595}
+  swapAction: {fileID: 1588407241}
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -362,8 +363,8 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: c5a00bc34592c334a853b8c99ccef4f9, type: 2}
     m_RemovedComponents:
-    - {fileID: 879070773882917929, guid: b887435a901ce2046acf855a83196017, type: 3}
-    - {fileID: 1856495987323678821, guid: b887435a901ce2046acf855a83196017, type: 3}
+    - {fileID: 0}
+    - {fileID: 0}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -376,10 +377,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2300758658699179215, guid: 23317a7e05929184aa3681a214316a4d, type: 3}
-      propertyPath: m_IsKinematic
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2567150345668074088, guid: 23317a7e05929184aa3681a214316a4d, type: 3}
       propertyPath: weaponData
       value: 
@@ -429,8 +426,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
-    - {fileID: 2300758658699179215, guid: 23317a7e05929184aa3681a214316a4d, type: 3}
-    - {fileID: 7167145761142596540, guid: 23317a7e05929184aa3681a214316a4d, type: 3}
+    - {fileID: 0}
+    - {fileID: 0}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -727,10 +724,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2300758658699179215, guid: 23317a7e05929184aa3681a214316a4d, type: 3}
-      propertyPath: m_IsKinematic
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2567150345668074088, guid: 23317a7e05929184aa3681a214316a4d, type: 3}
       propertyPath: weaponData
       value: 
@@ -780,8 +773,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
-    - {fileID: 2300758658699179215, guid: 23317a7e05929184aa3681a214316a4d, type: 3}
-    - {fileID: 7167145761142596540, guid: 23317a7e05929184aa3681a214316a4d, type: 3}
+    - {fileID: 0}
+    - {fileID: 0}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -794,10 +787,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2300758658699179215, guid: 23317a7e05929184aa3681a214316a4d, type: 3}
-      propertyPath: m_IsKinematic
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2567150345668074088, guid: 23317a7e05929184aa3681a214316a4d, type: 3}
       propertyPath: weaponData
       value: 
@@ -847,8 +836,8 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
-    - {fileID: 2300758658699179215, guid: 23317a7e05929184aa3681a214316a4d, type: 3}
-    - {fileID: 7167145761142596540, guid: 23317a7e05929184aa3681a214316a4d, type: 3}
+    - {fileID: 0}
+    - {fileID: 0}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -910,8 +899,8 @@ PrefabInstance:
       value: Weapon HandGun
       objectReference: {fileID: 0}
     m_RemovedComponents:
-    - {fileID: 1114110459220763051, guid: eea71867d65907045a92d15670981d45, type: 3}
-    - {fileID: 4231196785985308163, guid: eea71867d65907045a92d15670981d45, type: 3}
+    - {fileID: 0}
+    - {fileID: 0}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -1686,6 +1675,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.InputActionReference
   m_Asset: {fileID: -944628639613478452, guid: 2ddb10c82d14e0942b817db2ea553baf, type: 3}
   m_ActionId: 0b06ff54-8167-4ca3-a50a-c507ba69fc16
+--- !u!114 &1588407241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc1515ab76e54f068e2f2207940fab32, type: 3}
+  m_Name: Action map/Swap
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.InputActionReference
+  m_Asset: {fileID: -944628639613478452, guid: 2ddb10c82d14e0942b817db2ea553baf, type: 3}
+  m_ActionId: 4773f7c4-09f8-409a-8324-bd792adf9b83
 --- !u!1 &1785582184
 GameObject:
   m_ObjectHideFlags: 0

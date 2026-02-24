@@ -50,8 +50,6 @@ public class PlayerInteraction : MonoBehaviour
 
     public void AcquireItem(Item item)
     {
-        Debug.Log($"{item.name} 획득!");
-
         switch (item.Type)
         {
             case Item.ItemType.Ammo:
