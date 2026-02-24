@@ -17,29 +17,28 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float speed = 10f;
     
     [Header("Dodge Settings")]
-    [SerializeField] private float dodgeDuration = 0.575f;
     [SerializeField] private float dodgeCooldown = 1.2f;
     [SerializeField] private float dodgeSpeedMultiplier = 2.5f;
 
-    private NavMeshAgent _agent;
-    private Animator _animator;
     private Camera _mainCamera;
+    private NavMeshAgent _agent;
+    private PlayerAnimator _animator;
     private PlayerInteraction _playerInteraction;
     private PlayerWeaponManager _weaponManager;
     
+    private Vector3 _dodgeDirection;
     private float _nextDodgeTime;
     private float _dodgeTimer;
     private bool _isDodging;
-    private Vector3 _dodgeDirection; 
-
-    private readonly int _speedHash = Animator.StringToHash("Speed");
-    private readonly int _dodgeHash = Animator.StringToHash("DoDodge");
-
+    private bool _wasMoving;
+    private Vector3 _queuedPos;
+    private bool _hasQueuedMove;
+    
     private void Awake()
     {
-        _agent = GetComponent<NavMeshAgent>();
-        _animator = GetComponentInChildren<Animator>();
         _mainCamera = Camera.main;
+        _agent = GetComponent<NavMeshAgent>();
+        _animator = GetComponent<PlayerAnimator>();
         _playerInteraction = GetComponent<PlayerInteraction>();
         _weaponManager = GetComponent<PlayerWeaponManager>();
         
@@ -66,34 +65,52 @@ public class PlayerController : MonoBehaviour
     private void OnDisable()
     {
         moveAction.action.Disable();
+        moveAction.action.performed -= OnClickMove;
+        
         dodgeAction.action.Disable();
+        dodgeAction.action.performed -= OnDodge;
+        
+        interactAction.action.Disable();
+        interactAction.action.performed -= OnInteract;
+        
+        swapAction.action.Disable();
+        swapAction.action.performed -= OnSwapWeapon;
     }
 
     private void Update()
     {
-        UpdateAnimation();
-
         if (_isDodging)
         {
-            // 목표 지점까지 걷게 하는 대신, 지정된 방향으로 매 프레임 강제 이동
+            // 마우스 방향으로 강제 이동
             float currentDodgeSpeed = speed * dodgeSpeedMultiplier;
             _agent.Move(_dodgeDirection * (currentDodgeSpeed * Time.deltaTime));
-
-            _dodgeTimer -= Time.deltaTime;
-            if (_dodgeTimer <= 0)
+        }
+        else
+        {
+            // 멈춤<->이동 상태가 변할 때 1번만 애니메이터 부름
+            bool isMoving = _agent.velocity.magnitude > 0.1f;
+            if (isMoving != _wasMoving)
             {
-                EndDodge();
+                _animator?.SetMoving(isMoving);
+                _wasMoving = isMoving;
             }
         }
     }
 
     private void OnClickMove(InputAction.CallbackContext context)
     {
-        if (_isDodging) return; 
-
         if (GetMouseGroundPosition(out Vector3 targetPos))
         {
-            _agent.SetDestination(targetPos);
+            // dodge 중이라면 예약 걸어둠
+            if (_isDodging)
+            {
+                _hasQueuedMove = true;
+                _queuedPos = targetPos;
+            }
+            else
+            {
+                _agent.SetDestination(targetPos);
+            }
         }
     }
 
@@ -145,18 +162,19 @@ public class PlayerController : MonoBehaviour
     {
         _isDodging = true;
         _nextDodgeTime = Time.time + dodgeCooldown;
-        _dodgeTimer = dodgeDuration;
-        
-        _animator.SetTrigger(_dodgeHash);
+        _hasQueuedMove = false;
+        _animator?.TriggerDodge();
     }
 
-    private void EndDodge()
+    public void EndDodge()
     {
-        _isDodging = false;
+        _isDodging = false; 
         
-        // 회피가 끝난 직후 미끄러지지 않도록 정지
-        _agent.ResetPath(); 
-        _agent.velocity = Vector3.zero; 
+        if (_hasQueuedMove)
+        {
+            _agent.SetDestination(_queuedPos);
+            _hasQueuedMove = false;
+        }
     }
 
     // 마우스 위치를 바닥 좌표로 변환하는 공통 메서드
@@ -170,13 +188,5 @@ public class PlayerController : MonoBehaviour
         }
         position = Vector3.zero;
         return false;
-    }
-
-    private void UpdateAnimation()
-    {
-        // _agent.velocity.magnitude는 Move() 메서드를 사용할 때 정확하지 않을 수 있으므로
-        // dodge 중일 때는 강제로 스피드 값을 넣어 애니메이션이 멈추지 않도록 보완
-        float currentSpeed = _isDodging ? (speed * dodgeSpeedMultiplier) : _agent.velocity.magnitude;
-        _animator.SetFloat(_speedHash, currentSpeed);
     }
 }
