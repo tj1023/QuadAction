@@ -24,23 +24,18 @@ public class PlayerWeaponManager : MonoBehaviour
     public void AddWeapon(WeaponData newWeapon)
     {
         if (newWeapon == null) return;
-
-        // 무기 데이터에 설정된 슬롯 번호(0, 1, 2)를 가져옴
+        
         int slotIndex = (int)newWeapon.slot;
 
-        // 해당 슬롯에 이미 다른 무기가 있다면 교체 처리
-        if (_equippedWeapons[slotIndex] != null && _equippedWeapons[slotIndex] != newWeapon)
-        {
-            Debug.Log($"기존 {_equippedWeapons[slotIndex].weaponName}을(를) 버림");
-            // TODO: 무기를 땅에 떨어뜨리는 로직 추가
-        }
+        // 해당 슬롯에 이미 무기가 있다면 교체 처리
+        if (_equippedWeapons[slotIndex])
+            DropWeapon(_equippedWeapons[slotIndex]);
 
         // 새 무기를 해당 슬롯에 할당
         _equippedWeapons[slotIndex] = newWeapon;
         EventManager.OnWeaponAdded?.Invoke(slotIndex, newWeapon);
-        Debug.Log($"무기 획득: {newWeapon.weaponName} ({newWeapon.slot} 슬롯)");
         
-        EquipWeaponByIndex(slotIndex);
+        EquipWeaponByIndex(slotIndex, true);
     }
     
     private void EquipWeapon(WeaponData weaponData)
@@ -49,9 +44,7 @@ public class PlayerWeaponManager : MonoBehaviour
 
         // 1. 기존에 들고 있던 무기가 있다면 숨김
         if (_currentWeaponObject && _weaponInstances.TryGetValue(_currentWeaponData, out var currentWeapon))
-        {
             currentWeapon.SetActive(false);
-        }
 
         // 2. 장착하려는 무기가 생성된 적 있는지 확인
         if (_weaponInstances.ContainsKey(weaponData))
@@ -73,18 +66,18 @@ public class PlayerWeaponManager : MonoBehaviour
         // 3. 현재 무기 데이터 갱신
         _currentWeaponData = weaponData;
         _currentWeaponIndex = (int)weaponData.slot;
-        Debug.Log($"무기 장착 완료: {_currentWeaponData.weaponName} (공격타입: {_currentWeaponData.attackType})");
     }
 
     // 숫자 키로 직접 슬롯 선택
-    public void EquipWeaponByIndex(int index)
+    public void EquipWeaponByIndex(int index, bool forceEquip = false)
     {
         if (index < 0 || index >= _equippedWeapons.Length) return;
 
         WeaponData targetWeapon = _equippedWeapons[index];
         
         // 해당 슬롯이 비어있거나, 이미 들고 있는 무기라면 무시
-        if (targetWeapon == null || targetWeapon == _currentWeaponData) return;
+        if (targetWeapon == null) return;
+        if (targetWeapon == _currentWeaponData && !forceEquip) return;
 
         _animator?.ForceRestartSwap();
         EquipWeapon(targetWeapon);
@@ -117,6 +110,22 @@ public class PlayerWeaponManager : MonoBehaviour
                 }
                 break;
             }
+        }
+    }
+    
+    private void DropWeapon(WeaponData weaponToDrop)
+    {
+        if (weaponToDrop == null) return;
+
+        // 드랍 프리팹 생성
+        if (weaponToDrop.dropPrefab)
+        {
+            Vector3 dropPosition = transform.position + transform.forward * 1.0f + Vector3.up * 0.5f;
+            Instantiate(weaponToDrop.dropPrefab, dropPosition, Quaternion.identity);
+        }
+        else
+        {
+            Debug.LogWarning($"[WeaponManager] {weaponToDrop.weaponName}의 dropPrefab이 설정되지 않았습니다.");
         }
     }
 }

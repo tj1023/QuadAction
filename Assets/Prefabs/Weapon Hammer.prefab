@@ -5004,7 +5004,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Item
   type: 4
   value: 0
-  weaponData: {fileID: 0}
+  weaponData: {fileID: 11400000, guid: 05cb4efd4dba5564da9d934be4e4be96, type: 2}
 --- !u!1 &5454887870199240416
 GameObject:
   m_ObjectHideFlags: 0

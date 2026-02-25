@@ -18,4 +18,5 @@ MonoBehaviour:
   attackPower: 0
   attackRate: 0
   weaponPrefab: {fileID: 547435428816858648, guid: 203326381d9b54d489646c6c2f61f53a, type: 3}
+  dropPrefab: {fileID: 3223043723327094020, guid: b887435a901ce2046acf855a83196017, type: 3}
   weaponIcon: {fileID: 21300000, guid: 744566287c3cef64f9b897280e5d9b1a, type: 3}
