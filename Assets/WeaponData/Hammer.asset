@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d90201744b531a4cbdd07ba4a883cf2, type: 3}
   m_Name: Hammer
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
+  slot: 0
+  attackType: 0
   weaponName: Hammer
   attackPower: 0
   attackRate: 0
   weaponPrefab: {fileID: 1348174882345252545, guid: c2ec4bfd1a6491c49a0c34b8dc3a7639, type: 3}
+  weaponIcon: {fileID: 21300000, guid: 1c436558df0caa04eb65bf6f8d065918, type: 3}

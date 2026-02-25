@@ -1,11 +1,13 @@
-using UnityEngine;
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class PlayerWeaponManager : MonoBehaviour
 {
     [SerializeField] private Transform weaponSlot;
-    
-    private readonly List<WeaponData> _ownedWeapons = new List<WeaponData>();
+
+    private int _maxSlots;
+    private WeaponData[] _equippedWeapons;
     private readonly Dictionary<WeaponData, GameObject> _weaponInstances = new Dictionary<WeaponData, GameObject>();
     private GameObject _currentWeaponObject;
     private WeaponData _currentWeaponData;
@@ -15,23 +17,30 @@ public class PlayerWeaponManager : MonoBehaviour
     private void Awake()
     {
         _animator = GetComponent<PlayerAnimator>();
+        _maxSlots = Enum.GetValues(typeof(WeaponData.WeaponSlot)).Length;
+        _equippedWeapons = new WeaponData[_maxSlots];
     }
 
     public void AddWeapon(WeaponData newWeapon)
     {
         if (newWeapon == null) return;
+
+        // 무기 데이터에 설정된 슬롯 번호(0, 1, 2)를 가져옴
+        int slotIndex = (int)newWeapon.slot;
+
+        // 해당 슬롯에 이미 다른 무기가 있다면 교체 처리
+        if (_equippedWeapons[slotIndex] != null && _equippedWeapons[slotIndex] != newWeapon)
+        {
+            Debug.Log($"기존 {_equippedWeapons[slotIndex].weaponName}을(를) 버림");
+            // TODO: 무기를 땅에 떨어뜨리는 로직 추가
+        }
+
+        // 새 무기를 해당 슬롯에 할당
+        _equippedWeapons[slotIndex] = newWeapon;
+        EventManager.OnWeaponAdded?.Invoke(slotIndex, newWeapon);
+        Debug.Log($"무기 획득: {newWeapon.weaponName} ({newWeapon.slot} 슬롯)");
         
-        if (!_ownedWeapons.Contains(newWeapon))
-        {
-            _ownedWeapons.Add(newWeapon);
-            Debug.Log($"무기 획득: {newWeapon.weaponName}");
-            
-            EquipWeapon(newWeapon); 
-        }
-        else
-        {
-            Debug.Log("이미 보유한 무기입니다!");
-        }
+        EquipWeaponByIndex(slotIndex);
     }
     
     private void EquipWeapon(WeaponData weaponData)
@@ -63,22 +72,51 @@ public class PlayerWeaponManager : MonoBehaviour
 
         // 3. 현재 무기 데이터 갱신
         _currentWeaponData = weaponData;
-        _currentWeaponIndex = _ownedWeapons.IndexOf(weaponData);
-        Debug.Log($"무기 장착 완료: {_currentWeaponData.weaponName}");
+        _currentWeaponIndex = (int)weaponData.slot;
+        Debug.Log($"무기 장착 완료: {_currentWeaponData.weaponName} (공격타입: {_currentWeaponData.attackType})");
     }
 
+    // 숫자 키로 직접 슬롯 선택
+    public void EquipWeaponByIndex(int index)
+    {
+        if (index < 0 || index >= _equippedWeapons.Length) return;
+
+        WeaponData targetWeapon = _equippedWeapons[index];
+        
+        // 해당 슬롯이 비어있거나, 이미 들고 있는 무기라면 무시
+        if (targetWeapon == null || targetWeapon == _currentWeaponData) return;
+
+        _animator?.ForceRestartSwap();
+        EquipWeapon(targetWeapon);
+        
+        EventManager.OnWeaponEquipped?.Invoke(index);
+    }
+    
     public void SwapWeapon(int direction)
     {
-        if(_ownedWeapons.Count <= 1) return;
-        
-        int newIndex = _currentWeaponIndex + direction;
+        if (_currentWeaponIndex == -1) return;
 
-        if (newIndex >= _ownedWeapons.Count)
-            newIndex = 0;
-        else if (newIndex < 0)
-            newIndex = _ownedWeapons.Count - 1;
+        int nextIndex = _currentWeaponIndex;
         
-        _animator.ForceRestartSwap();
-        EquipWeapon(_ownedWeapons[newIndex]);
+        // 슬롯 개수까지만 빈 슬롯을 건너뜀
+        for (int i = 0; i < _maxSlots; i++)
+        {
+            nextIndex += direction;
+            
+            // 인덱스 순환
+            if (nextIndex >= _maxSlots) nextIndex = 0;
+            else if (nextIndex < 0) nextIndex = _maxSlots - 1;
+
+            // 빈 슬롯이 아니라면 무기 교체 시도
+            if (_equippedWeapons[nextIndex] != null)
+            {
+                // 찾은 무기가 지금 들고 있는 것과 다를 때만 장착 (무기가 1개일 때 무한 스왑 방지)
+                if (nextIndex != _currentWeaponIndex)
+                {
+                    EquipWeaponByIndex(nextIndex);
+                }
+                break;
+            }
+        }
     }
 }

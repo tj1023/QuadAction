@@ -11,7 +11,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private InputActionReference interactAction;
     [SerializeField] private InputActionReference swapAction;
 
-    
+    [Header("Weapon Slots")]
+    [SerializeField] private InputActionReference equipSlot1Action;
+    [SerializeField] private InputActionReference equipSlot2Action;
+    [SerializeField] private InputActionReference equipSlot3Action;
+
     [Header("Movement Settings")]
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float speed = 10f;
@@ -60,6 +64,15 @@ public class PlayerController : MonoBehaviour
         
         swapAction.action.Enable();
         swapAction.action.performed += OnSwapWeapon;
+        
+        equipSlot1Action.action.Enable();
+        equipSlot1Action.action.performed += OnEquipSlot1;
+        
+        equipSlot2Action.action.Enable();
+        equipSlot2Action.action.performed += OnEquipSlot2;
+        
+        equipSlot3Action.action.Enable();
+        equipSlot3Action.action.performed += OnEquipSlot3;
     }
 
     private void OnDisable()
@@ -75,6 +88,15 @@ public class PlayerController : MonoBehaviour
         
         swapAction.action.Disable();
         swapAction.action.performed -= OnSwapWeapon;
+        
+        equipSlot1Action.action.Disable();
+        equipSlot1Action.action.performed -= OnEquipSlot1;
+
+        equipSlot2Action.action.Disable();
+        equipSlot2Action.action.performed -= OnEquipSlot2;
+
+        equipSlot3Action.action.Disable();
+        equipSlot3Action.action.performed -= OnEquipSlot3;
     }
 
     private void Update()
@@ -151,6 +173,23 @@ public class PlayerController : MonoBehaviour
         else if (scrollValue < 0) _weaponManager.SwapWeapon(-1);
     }
     
+    private void OnEquipSlot1(InputAction.CallbackContext context) => EquipSlot(0);
+    private void OnEquipSlot2(InputAction.CallbackContext context) => EquipSlot(1);
+    private void OnEquipSlot3(InputAction.CallbackContext context) => EquipSlot(2);
+    
+    // 마우스 위치를 바닥 좌표로 변환하는 공통 메서드
+    private bool GetMouseGroundPosition(out Vector3 position)
+    {
+        Ray ray = _mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f, groundLayer))
+        {
+            position = hit.point;
+            return true;
+        }
+        position = Vector3.zero;
+        return false;
+    }
+
     private void StartDodge()
     {
         _isDodging = true;
@@ -178,16 +217,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // 마우스 위치를 바닥 좌표로 변환하는 공통 메서드
-    private bool GetMouseGroundPosition(out Vector3 position)
+    private void EquipSlot(int index)
     {
-        Ray ray = _mainCamera.ScreenPointToRay(Mouse.current.position.ReadValue());
-        if (Physics.Raycast(ray, out RaycastHit hit, 100f, groundLayer))
-        {
-            position = hit.point;
-            return true;
-        }
-        position = Vector3.zero;
-        return false;
+        if (_isDodging || _weaponManager == null) return;
+        _weaponManager.EquipWeaponByIndex(index);
     }
 }

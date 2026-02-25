@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d90201744b531a4cbdd07ba4a883cf2, type: 3}
   m_Name: SubMachineGun
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
+  slot: 0
+  attackType: 1
   weaponName: SubMachineGun
   attackPower: 0
   attackRate: 0
   weaponPrefab: {fileID: 547435428816858648, guid: 203326381d9b54d489646c6c2f61f53a, type: 3}
+  weaponIcon: {fileID: 21300000, guid: 744566287c3cef64f9b897280e5d9b1a, type: 3}
