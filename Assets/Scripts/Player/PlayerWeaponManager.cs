@@ -6,13 +6,14 @@ public class PlayerWeaponManager : MonoBehaviour
 {
     [SerializeField] private Transform weaponSlot;
 
+    private PlayerAnimator _animator;
     private int _maxSlots;
     private WeaponData[] _equippedWeapons;
     private readonly Dictionary<WeaponData, GameObject> _weaponInstances = new Dictionary<WeaponData, GameObject>();
     private GameObject _currentWeaponObject;
     private WeaponData _currentWeaponData;
     private int _currentWeaponIndex = -1;
-    private PlayerAnimator _animator;
+    private int _ammo;
 
     private void Awake()
     {
@@ -138,5 +139,11 @@ public class PlayerWeaponManager : MonoBehaviour
         {
             Debug.LogWarning($"[WeaponManager] {weaponToDrop.weaponName}의 dropPrefab이 설정되지 않았습니다.");
         }
+    }
+
+    public void AddAmmo(int amount)
+    {
+        _ammo += amount;
+        Debug.Log($"탄약 추가됨. 현재: {_ammo}");
     }
 }

@@ -31,10 +31,25 @@ public class ConsumableItem : MonoBehaviour, ICollectible
         switch (type)
         {
             case ConsumableType.Ammo:
+                if (collector.TryGetComponent(out PlayerWeaponManager weaponManager))
+                {
+                    weaponManager.AddAmmo(value);
+                    Debug.Log($"탄약 획득: {value}");
+                }
                 break;
             case ConsumableType.Coin:
+                if (collector.TryGetComponent(out PlayerStats statsForMoney))
+                {
+                    statsForMoney.AddMoney(value);
+                    Debug.Log($"골드 획득: {value}");
+                }
                 break;
             case ConsumableType.Heart:
+                if (collector.TryGetComponent(out PlayerStats statsForHp))
+                {
+                    statsForHp.Heal(value);
+                    Debug.Log($"HP 회복: {value}");
+                }
                 break;
         }
         
