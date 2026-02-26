@@ -120,8 +120,19 @@ public class PlayerWeaponManager : MonoBehaviour
         // 드랍 프리팹 생성
         if (weaponToDrop.dropPrefab)
         {
-            Vector3 dropPosition = transform.position + transform.forward * 1.0f + Vector3.up * 0.5f;
-            Instantiate(weaponToDrop.dropPrefab, dropPosition, Quaternion.identity);
+            Vector3 dropPosition = transform.position + transform.forward * 1.0f + Vector3.up * 1.5f;
+            GameObject droppedWeapon = Instantiate(weaponToDrop.dropPrefab, dropPosition, Quaternion.identity);
+            
+            if (droppedWeapon.TryGetComponent(out Rigidbody rb))
+            {
+                Vector3 dropDirection = (transform.forward + Vector3.up).normalized;
+                float dropForce = 5.0f;
+                rb.AddForce(dropDirection * dropForce, ForceMode.Impulse);
+            }
+            else
+            {
+                Debug.LogWarning($"[WeaponManager] {weaponToDrop.dropPrefab.name} 프리팹에 Rigidbody 컴포넌트가 없어 물리 효과를 적용할 수 없습니다.");
+            }
         }
         else
         {
