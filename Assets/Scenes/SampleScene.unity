@@ -741,6 +741,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Weapon Grenade
       objectReference: {fileID: 0}
+    - target: {fileID: 8198890478031108748, guid: 66bacc6e3799ab74c80843dea7d39a5c, type: 3}
+      propertyPath: type
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8198890478031108748, guid: 66bacc6e3799ab74c80843dea7d39a5c, type: 3}
+      propertyPath: weaponData
+      value: 
+      objectReference: {fileID: 11400000, guid: 315128b67e0e97d42859b00cf604edc7, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

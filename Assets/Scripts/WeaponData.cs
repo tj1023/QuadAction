@@ -14,6 +14,7 @@ public class WeaponData : ScriptableObject
     public string weaponName;
     public int attackPower;
     public float attackRate;
+    public int maxAmmo;
 
     [Header("Visuals")]
     public GameObject weaponPrefab;

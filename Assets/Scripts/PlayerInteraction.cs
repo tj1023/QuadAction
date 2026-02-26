@@ -3,71 +3,51 @@ using System.Collections.Generic;
 
 public class PlayerInteraction : MonoBehaviour
 {
-    private readonly List<Item> _nearbyItems = new List<Item>();
-    private PlayerWeaponManager _weaponManager;
+    private readonly List<IInteractable> _nearbyInteractables = new List<IInteractable>();
 
-    private void Awake()
+    public void AddInteractable(IInteractable interactable)
     {
-        _weaponManager = GetComponent<PlayerWeaponManager>();
+        if(!_nearbyInteractables.Contains(interactable))
+            _nearbyInteractables.Add(interactable);
     }
 
-    public void AddNearbyItem(Item item)
+    public void RemoveInteractable(IInteractable interactable)
     {
-        if(!_nearbyItems.Contains(item))
-            _nearbyItems.Add(item);
-    }
-
-    public void RemoveNearbyItem(Item item)
-    {
-        _nearbyItems.Remove(item);
+        _nearbyInteractables.Remove(interactable);
     }
 
     public void PickupClosestItem()
     {
-        if (_nearbyItems.Count == 0) return;
+        if (_nearbyInteractables.Count == 0) return;
         
-        Item closestItem = null;
+        IInteractable closestInteractable = null;
         float minDist = float.MaxValue;
 
-        foreach (Item item in _nearbyItems)
+        // 리스트를 역순으로 순회하며 파괴된 오브젝트를 안전하게 걸러냄
+        for (int i = _nearbyInteractables.Count - 1; i >= 0; i--)
         {
-            if(item == null) continue;
+            IInteractable interactable = _nearbyInteractables[i];
             
-            float dist = Vector3.Distance(transform.position, item.transform.position);
+            // 오브젝트가 파괴되었는지 검사
+            if (interactable as MonoBehaviour == null)
+            {
+                _nearbyInteractables.RemoveAt(i);
+                continue;
+            }
+
+            float dist = Vector3.Distance(transform.position, interactable.GetPosition());
             if (dist < minDist)
             {
                 minDist = dist;
-                closestItem = item;
+                closestInteractable = interactable;
             }
         }
 
-        if (closestItem != null)
+        if (closestInteractable != null)
         {
-            AcquireItem(closestItem);
-            _nearbyItems.Remove(closestItem);
+            // 구체적인 타입 검사 없이 다형성을 이용해 상호작용 실행
+            closestInteractable.Interact(gameObject);
+            _nearbyInteractables.Remove(closestInteractable);
         }
-    }
-
-    public void AcquireItem(Item item)
-    {
-        switch (item.Type)
-        {
-            case Item.ItemType.Ammo:
-                break;
-            case Item.ItemType.Coin:
-                break;
-            case Item.ItemType.Grenade:
-                break;
-            case Item.ItemType.Heart:
-                break;
-            case Item.ItemType.Weapon:
-                if (_weaponManager != null && item.WeaponData != null)
-                {
-                    _weaponManager.AddWeapon(item.WeaponData);
-                }
-                break;
-        }
-        
-        item.Collect();
     }
 }

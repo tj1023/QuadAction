@@ -116,11 +116,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 3223043723327094020}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1fd0f3998582ca45b085b2d57dd755c, type: 3}
+  m_Script: {fileID: 11500000, guid: bff1b2fd356c1694b8214335fb0eed6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
-  type: 4
-  value: 2
   weaponData: {fileID: 11400000, guid: c5a00bc34592c334a853b8c99ccef4f9, type: 2}
 --- !u!1 &4884656168873136604
 GameObject:

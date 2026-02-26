@@ -5049,12 +5049,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 6342572045223893623}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1fd0f3998582ca45b085b2d57dd755c, type: 3}
+  m_Script: {fileID: 11500000, guid: bff1b2fd356c1694b8214335fb0eed6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
-  type: 2
-  value: 1
-  weaponData: {fileID: 0}
+  weaponData: {fileID: 11400000, guid: 315128b67e0e97d42859b00cf604edc7, type: 2}
 --- !u!1 &8028307554045645817
 GameObject:
   m_ObjectHideFlags: 0

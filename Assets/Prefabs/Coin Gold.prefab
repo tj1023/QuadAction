@@ -153,9 +153,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 8273922759160267363}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1fd0f3998582ca45b085b2d57dd755c, type: 3}
+  m_Script: {fileID: 11500000, guid: 1b489ddc58c192e4c82c642e4e7f799e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
   type: 1
   value: 100
-  weaponData: {fileID: 0}
