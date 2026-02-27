@@ -16,7 +16,7 @@ MonoBehaviour:
   attackType: 0
   weaponName: Hammer
   attackPower: 20
-  attackRate: 2
+  attackRate: 1
   maxAmmo: 0
   weaponPrefab: {fileID: 1348174882345252545, guid: c2ec4bfd1a6491c49a0c34b8dc3a7639, type: 3}
   dropPrefab: {fileID: 4802598322363444249, guid: 23317a7e05929184aa3681a214316a4d, type: 3}

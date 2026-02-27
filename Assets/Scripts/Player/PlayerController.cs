@@ -10,6 +10,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private InputActionReference dodgeAction;
     [SerializeField] private InputActionReference interactAction;
     [SerializeField] private InputActionReference swapAction;
+    [SerializeField] private InputActionReference fireAction;
+    [SerializeField] private InputActionReference reLoadAction;
+
 
     [Header("Weapon Slots")]
     [SerializeField] private InputActionReference equipSlot1Action;
@@ -73,6 +76,12 @@ public class PlayerController : MonoBehaviour
         
         equipSlot3Action.action.Enable();
         equipSlot3Action.action.performed += OnEquipSlot3;
+
+        fireAction.action.Enable();
+        fireAction.action.performed += OnFire;
+        
+        reLoadAction.action.Enable();
+        reLoadAction.action.performed += OnReLoad;
     }
 
     private void OnDisable()
@@ -97,6 +106,12 @@ public class PlayerController : MonoBehaviour
 
         equipSlot3Action.action.Disable();
         equipSlot3Action.action.performed -= OnEquipSlot3;
+        
+        fireAction.action.Disable();
+        fireAction.action.performed -= OnFire;
+        
+        reLoadAction.action.Disable();
+        reLoadAction.action.performed -= OnReLoad;
     }
 
     private void Update()
@@ -160,8 +175,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnInteract(InputAction.CallbackContext context)
     {
-        if(_playerInteraction == null) return;
-        _playerInteraction.PickupClosestItem();
+        _playerInteraction?.PickupClosestItem();
     }
     
     private void OnSwapWeapon(InputAction.CallbackContext context)
@@ -176,6 +190,16 @@ public class PlayerController : MonoBehaviour
     private void OnEquipSlot1(InputAction.CallbackContext context) => EquipSlot(0);
     private void OnEquipSlot2(InputAction.CallbackContext context) => EquipSlot(1);
     private void OnEquipSlot3(InputAction.CallbackContext context) => EquipSlot(2);
+
+    private void OnFire(InputAction.CallbackContext context)
+    {
+        _weaponManager?.TryAttack();
+    }
+    
+    private void OnReLoad(InputAction.CallbackContext context)
+    {
+        _weaponManager?.TryReload();
+    }
     
     // 마우스 위치를 바닥 좌표로 변환하는 공통 메서드
     private bool GetMouseGroundPosition(out Vector3 position)
@@ -198,7 +222,8 @@ public class PlayerController : MonoBehaviour
 
         if (_animator)
         {
-            _animator.ResetTriggers();
+            _animator.ResetSwapTrigger();
+            _animator.CancelReloadAnimation();
             _animator.SetUpperBodyWeight(0f);
             _animator.TriggerDodge();
         }

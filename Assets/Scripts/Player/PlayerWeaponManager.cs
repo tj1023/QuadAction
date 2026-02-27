@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerWeaponManager : MonoBehaviour
@@ -7,90 +6,73 @@ public class PlayerWeaponManager : MonoBehaviour
     [SerializeField] private Transform weaponSlot;
 
     private PlayerAnimator _animator;
-    private int _maxSlots;
-    private WeaponData[] _equippedWeapons;
-    private readonly Dictionary<WeaponData, GameObject> _weaponInstances = new Dictionary<WeaponData, GameObject>();
-    private GameObject _currentWeaponObject;
-    private WeaponData _currentWeaponData;
-    private int _currentWeaponIndex = -1;
+    private Weapon[] _equippedWeapons;
+    private Weapon _currentWeapon;
     private int _ammo;
+    private int _maxSlots;
 
     private void Awake()
     {
         _animator = GetComponent<PlayerAnimator>();
         _maxSlots = Enum.GetValues(typeof(WeaponData.WeaponSlot)).Length;
-        _equippedWeapons = new WeaponData[_maxSlots];
+        _equippedWeapons = new Weapon[_maxSlots];
     }
 
-    public void AddWeapon(WeaponData newWeapon)
+    public void AddWeapon(WeaponData newWeaponData)
     {
-        if (newWeapon == null) return;
+        if (newWeaponData == null) return;
         
-        int slotIndex = (int)newWeapon.slot;
+        int slotIndex = (int)newWeaponData.slot;
 
-        // 해당 슬롯에 이미 무기가 있다면 교체 처리
+        // 해당 슬롯에 이미 무기가 있다면 기존 무기 드랍
         if (_equippedWeapons[slotIndex])
             DropWeapon(_equippedWeapons[slotIndex]);
 
-        // 새 무기를 해당 슬롯에 할당
+        // 새 무기 프리팹을 손(weaponSlot) 위치에 생성
+        GameObject weaponObj = Instantiate(newWeaponData.weaponPrefab, weaponSlot);
+        weaponObj.transform.localPosition = Vector3.zero;
+        weaponObj.transform.localRotation = Quaternion.identity;
+
+        // Weapon 컴포넌트를 가져와서 초기화
+        if (!weaponObj.TryGetComponent(out Weapon newWeapon))
+        {
+            Debug.LogError($"{newWeaponData.weaponName}의 프리팹({weaponObj.name})에 Weapon 컴포넌트가 없습니다.");
+            Destroy(weaponObj);
+            return;
+        }
+        newWeapon.Initialize(newWeaponData); 
+
+        // 배열에 등록하고 해당 슬롯 장착
         _equippedWeapons[slotIndex] = newWeapon;
-        EventManager.OnWeaponAdded?.Invoke(slotIndex, newWeapon);
-        
+        EventManager.OnWeaponAdded?.Invoke(slotIndex, newWeaponData);
         EquipWeaponByIndex(slotIndex, true);
+        
+        if (IsPrimaryRangedWeapon(newWeapon))
+            Invoke(nameof(TryReload), 0.3f); 
     }
     
-    private void EquipWeapon(WeaponData weaponData)
-    {
-        if (weaponData == null || weaponData.weaponPrefab == null) return;
-
-        // 1. 기존에 들고 있던 무기가 있다면 숨김
-        if (_currentWeaponObject && _weaponInstances.TryGetValue(_currentWeaponData, out var currentWeapon))
-            currentWeapon.SetActive(false);
-
-        // 2. 장착하려는 무기가 생성된 적 있는지 확인
-        if (_weaponInstances.ContainsKey(weaponData))
-        {
-            // 생성된 적 있다면 active
-            _weaponInstances[weaponData].SetActive(true);
-            _currentWeaponObject = _weaponInstances[weaponData];
-        }
-        else
-        {
-            // 처음 줍는 무기라면 새로 생성하고 등록
-            _currentWeaponObject = Instantiate(weaponData.weaponPrefab, weaponSlot);
-            _currentWeaponObject.transform.localPosition = Vector3.zero;
-            _currentWeaponObject.transform.localRotation = Quaternion.identity;
-            
-            _weaponInstances.Add(weaponData, _currentWeaponObject);
-        }
-
-        // 3. 현재 무기 데이터 갱신
-        _currentWeaponData = weaponData;
-        _currentWeaponIndex = (int)weaponData.slot;
-    }
-
-    // 숫자 키로 직접 슬롯 선택
     public void EquipWeaponByIndex(int index, bool forceEquip = false)
     {
-        if (index < 0 || index >= _equippedWeapons.Length) return;
+        if (index < 0 || index >= _maxSlots) return;
 
-        WeaponData targetWeapon = _equippedWeapons[index];
+        Weapon targetWeapon = _equippedWeapons[index];
+        if (targetWeapon == null) return; // 빈 슬롯
+        if (targetWeapon == _currentWeapon && !forceEquip) return; // 이미 들고 있음
         
-        // 해당 슬롯이 비어있거나, 이미 들고 있는 무기라면 무시
-        if (targetWeapon == null) return;
-        if (targetWeapon == _currentWeaponData && !forceEquip) return;
-
-        _animator?.ForceRestartSwap();
-        EquipWeapon(targetWeapon);
+        _currentWeapon?.gameObject.SetActive(false);
+        _currentWeapon = targetWeapon;
+        _currentWeapon.gameObject.SetActive(true);
         
+        _animator.PlaySwapAnimation();
         EventManager.OnWeaponEquipped?.Invoke(index);
+        UpdateAmmoUI();
     }
     
     public void SwapWeapon(int direction)
     {
-        if (_currentWeaponIndex == -1) return;
-
-        int nextIndex = _currentWeaponIndex;
+        if (_currentWeapon == null) return;
+        int currentIndex = (int)_currentWeapon.Data.slot;
+        int nextIndex = currentIndex;
         
         // 슬롯 개수까지만 빈 슬롯을 건너뜀
         for (int i = 0; i < _maxSlots; i++)
@@ -104,46 +86,85 @@ public class PlayerWeaponManager : MonoBehaviour
             // 빈 슬롯이 아니라면 무기 교체 시도
             if (_equippedWeapons[nextIndex] != null)
             {
-                // 찾은 무기가 지금 들고 있는 것과 다를 때만 장착 (무기가 1개일 때 무한 스왑 방지)
-                if (nextIndex != _currentWeaponIndex)
-                {
+                // 현재 들고 있는 무기가 아닐 때만 장착
+                if (nextIndex != currentIndex)
                     EquipWeaponByIndex(nextIndex);
-                }
                 break;
             }
         }
     }
     
-    private void DropWeapon(WeaponData weaponToDrop)
+    private void DropWeapon(Weapon weaponToDrop)
     {
-        if (weaponToDrop == null) return;
+        // 남은 탄창이 있다면 예비 탄약으로 환급
+        if (IsPrimaryRangedWeapon(weaponToDrop))
+        {
+            _ammo += weaponToDrop.CurrentAmmo;
+            Debug.Log($"버려진 무기의 총알 {weaponToDrop.CurrentAmmo}발 반환됨. 현재 총알 수: {_ammo}");
+        }
 
-        // 드랍 프리팹 생성
-        if (weaponToDrop.dropPrefab)
+        // 드랍용 프리팹(아이템) 바닥에 생성
+        if (weaponToDrop.Data.dropPrefab != null)
         {
-            Vector3 dropPosition = transform.position + transform.forward * 1.0f + Vector3.up * 1.5f;
-            GameObject droppedWeapon = Instantiate(weaponToDrop.dropPrefab, dropPosition, Quaternion.identity);
+            Vector3 dropPosition = transform.position + transform.forward * 0.5f + Vector3.up * 1.2f;
+            GameObject droppedItemObj = Instantiate(weaponToDrop.Data.dropPrefab, dropPosition, Quaternion.identity);
             
-            if (droppedWeapon.TryGetComponent(out Rigidbody rb))
+            if (droppedItemObj.TryGetComponent(out Rigidbody rb))
             {
-                Vector3 dropDirection = (transform.forward + Vector3.up).normalized;
-                float dropForce = 5.0f;
-                rb.AddForce(dropDirection * dropForce, ForceMode.Impulse);
-            }
-            else
-            {
-                Debug.LogWarning($"[WeaponManager] {weaponToDrop.dropPrefab.name} 프리팹에 Rigidbody 컴포넌트가 없어 물리 효과를 적용할 수 없습니다.");
+                rb.constraints = RigidbodyConstraints.FreezeRotation;
+                rb.AddForce((transform.forward + Vector3.up * 0.5f).normalized * 4.0f, ForceMode.Impulse);
             }
         }
-        else
-        {
-            Debug.LogWarning($"[WeaponManager] {weaponToDrop.weaponName}의 dropPrefab이 설정되지 않았습니다.");
-        }
+
+        // 손에 들고 있던 무기 오브젝트 파괴
+        Destroy(weaponToDrop.gameObject);
     }
 
     public void AddAmmo(int amount)
     {
         _ammo += amount;
-        Debug.Log($"탄약 추가됨. 현재: {_ammo}");
+        UpdateAmmoUI();
+    }
+    
+    public void TryAttack()
+    {
+        if (_currentWeapon == null) return;
+        
+        if (_currentWeapon.CanAttack())
+        {
+            _animator.CancelReloadAnimation();
+            _currentWeapon.PerformAttack();
+            UpdateAmmoUI();
+            _animator.PlayAttackAnimation(_currentWeapon.Data.attackType);
+        }
+    }
+    
+    public void TryReload()
+    {
+        if (!IsPrimaryRangedWeapon(_currentWeapon)) return;
+
+        if (_currentWeapon.CurrentAmmo < _currentWeapon.Data.maxAmmo && _ammo > 0) 
+            _animator.PlayReloadAnimation();
+    }
+    
+    public void ExecuteReload()
+    {
+        int ammoToReload = Mathf.Min(_currentWeapon.Data.maxAmmo - _currentWeapon.CurrentAmmo, _ammo);
+        _currentWeapon.FillAmmo(ammoToReload);
+        _ammo -= ammoToReload;
+        UpdateAmmoUI();
+    }
+    
+    private void UpdateAmmoUI()
+    {
+        if (IsPrimaryRangedWeapon(_currentWeapon))
+            EventManager.OnAmmoChanged?.Invoke(_currentWeapon.CurrentAmmo, _ammo);
+        else
+            EventManager.OnAmmoChanged?.Invoke(-1, -1);
+    }
+
+    private static bool IsPrimaryRangedWeapon(Weapon weapon)
+    {
+        return weapon && weapon.Data.slot == 0 && weapon.Data.attackType == WeaponData.AttackType.Ranged ;
     }
 }
