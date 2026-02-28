@@ -1,8 +1,7 @@
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
 {
     [Header("Input Actions")]
@@ -22,13 +21,14 @@ public class PlayerController : MonoBehaviour
     [Header("Movement Settings")]
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private float speed = 10f;
+    [SerializeField] private float gravity = -9.81f;
     
     [Header("Dodge Settings")]
     [SerializeField] private float dodgeCooldown = 1.2f;
     [SerializeField] private float dodgeSpeedMultiplier = 2.5f;
 
     private Camera _mainCamera;
-    private NavMeshAgent _agent;
+    private CharacterController _controller;
     private PlayerAnimator _animator;
     private PlayerInteraction _playerInteraction;
     private PlayerWeaponManager _weaponManager;
@@ -38,27 +38,21 @@ public class PlayerController : MonoBehaviour
     private float _dodgeTimer;
     private bool _isDodging;
     private bool _wasMoving;
-    private Vector3 _queuedPos;
-    private bool _hasQueuedMove;
     private bool _isAttacking;
+    private float _verticalVelocity;
     
     private void Awake()
     {
         _mainCamera = Camera.main;
-        _agent = GetComponent<NavMeshAgent>();
+        _controller = GetComponent<CharacterController>();
         _animator = GetComponent<PlayerAnimator>();
         _playerInteraction = GetComponent<PlayerInteraction>();
         _weaponManager = GetComponent<PlayerWeaponManager>();
-        
-        _agent.speed = speed;
-        _agent.acceleration = 200f;
-        _agent.angularSpeed = 1000f;
     }
 
     private void OnEnable()
     {
         moveAction.action.Enable();
-        moveAction.action.performed += OnClickMove;
 
         dodgeAction.action.Enable();
         dodgeAction.action.performed += OnDodge;
@@ -89,7 +83,6 @@ public class PlayerController : MonoBehaviour
     private void OnDisable()
     {
         moveAction.action.Disable();
-        moveAction.action.performed -= OnClickMove;
         
         dodgeAction.action.Disable();
         dodgeAction.action.performed -= OnDodge;
@@ -119,18 +112,26 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        // 중력 처리
+        if (_controller.isGrounded && _verticalVelocity < 0f)
+            _verticalVelocity = -2f; // 약간의 아래 힘으로 바닥에 밀착
+        else
+            _verticalVelocity += gravity * Time.deltaTime;
+
         if (_isDodging)
         {
-            // 마우스 방향으로 강제 이동
             float currentDodgeSpeed = speed * dodgeSpeedMultiplier;
-            _agent.Move(_dodgeDirection * (currentDodgeSpeed * Time.deltaTime));
+            Vector3 dodgeMove = _dodgeDirection * (currentDodgeSpeed * Time.deltaTime);
+            dodgeMove.y = _verticalVelocity * Time.deltaTime;
+            _controller.Move(dodgeMove);
         }
         else
         {
             if (_animator && _animator.IsPlayingAttackAnimation())
             {
-                // 공격 중에는 이동 멈춤 유지
-                _agent.velocity = Vector3.zero;
+                // 공격 중에는 이동 멈춤, 중력만 적용
+                Vector3 gravityOnly = new Vector3(0f, _verticalVelocity * Time.deltaTime, 0f);
+                _controller.Move(gravityOnly);
 
                 // 공격 중에도 마우스 방향으로 회전 가능하도록 업데이트
                 if (GetMouseGroundPosition(out Vector3 mousePos))
@@ -143,20 +144,27 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                if (_hasQueuedMove)
-                {
-                    _agent.SetDestination(_queuedPos);
-                    _hasQueuedMove = false;
-                }
+                // WASD 이동
+                Vector2 input = moveAction.action.ReadValue<Vector2>();
+                Vector3 moveDir = GetCameraRelativeDirection(input);
+
+                Vector3 move = moveDir * (speed * Time.deltaTime);
+                move.y = _verticalVelocity * Time.deltaTime;
+                _controller.Move(move);
+
+                // 이동 방향으로 캐릭터 회전
+                if (moveDir != Vector3.zero)
+                    transform.forward = moveDir;
             }
 
             // 연속 공격 로직은 이동 제한과 독립적으로 매 프레임 검사
-            // 안 그러면 이전 공격 애니메이션이 완전히 끝나기 전까지 다음 공격이 블록되어 연사 속도가 느려짐
             if (_isAttacking && _weaponManager && _weaponManager.CanAttackCurrentWeapon())
                 StartAttack();
 
             // 멈춤<->이동 상태가 변할 때 1번만 애니메이터 부름
-            bool isMoving = _agent.velocity.magnitude > 0.1f;
+            Vector2 currentInput = moveAction.action.ReadValue<Vector2>();
+            bool isMoving = currentInput.sqrMagnitude > 0.01f
+                            && !(_animator && _animator.IsPlayingAttackAnimation());
             if (isMoving != _wasMoving)
             {
                 _animator?.SetMoving(isMoving);
@@ -165,43 +173,39 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void OnClickMove(InputAction.CallbackContext context)
+    private Vector3 GetCameraRelativeDirection(Vector2 input)
     {
-        if (GetMouseGroundPosition(out Vector3 targetPos))
-        {
-            // dodge 중이거나 공격 중이라면 예약 걸어둠
-            if (_isDodging || (_animator && _animator.IsPlayingAttackAnimation()))
-            {
-                _hasQueuedMove = true;
-                _queuedPos = targetPos;
-            }
-            else
-            {
-                _agent.SetDestination(targetPos);
-            }
-        }
+        if (input.sqrMagnitude < 0.01f) return Vector3.zero;
+
+        Transform camTransform = _mainCamera.transform;
+        Vector3 camForward = camTransform.forward;
+        Vector3 camRight = camTransform.right;
+
+        // y축 성분 제거하여 수평면에서만 이동
+        camForward.y = 0f;
+        camRight.y = 0f;
+        camForward.Normalize();
+        camRight.Normalize();
+
+        return (camForward * input.y + camRight * input.x).normalized;
     }
 
     private void OnDodge(InputAction.CallbackContext context)
     {
         if (Time.time < _nextDodgeTime || _isDodging) return;
 
-        if (GetMouseGroundPosition(out Vector3 mousePos))
-        {
-            // 1. 회피 방향 = 마우스 방향
-            _dodgeDirection = (mousePos - transform.position).normalized;
-            _dodgeDirection.y = 0; // y축으로 파고드는 것을 방지
-            
-            // 2. 회피 방향으로 즉시 캐릭터를 회전
-            if (_dodgeDirection != Vector3.zero)
-                transform.forward = _dodgeDirection;
+        // 회피 방향 = WASD 입력 방향, 입력이 없으면 캐릭터가 바라보는 방향
+        Vector2 input = moveAction.action.ReadValue<Vector2>();
+        _dodgeDirection = input.sqrMagnitude > 0.01f
+            ? GetCameraRelativeDirection(input)
+            : transform.forward;
+        _dodgeDirection.y = 0;
 
-            // 3. 기존의 이동 명령과 남아있는 속도 초기화
-            _agent.ResetPath();
-            _agent.velocity = Vector3.zero;
+        // 회피 방향으로 즉시 캐릭터를 회전
+        if (_dodgeDirection != Vector3.zero)
+            transform.forward = _dodgeDirection;
 
-            StartDodge();
-        }
+        StartDodge();
     }
 
     private void OnInteract(InputAction.CallbackContext context)
@@ -264,7 +268,6 @@ public class PlayerController : MonoBehaviour
     {
         _isDodging = true;
         _nextDodgeTime = Time.time + dodgeCooldown;
-        _hasQueuedMove = false;
         CancelAttack();
 
         if (_animator)
@@ -281,12 +284,6 @@ public class PlayerController : MonoBehaviour
         _isDodging = false; 
         
         _animator?.SetUpperBodyWeight(1f);
-        
-        if (_hasQueuedMove)
-        {
-            _agent.SetDestination(_queuedPos);
-            _hasQueuedMove = false;
-        }
     }
 
     private void EquipSlot(int index)
@@ -308,17 +305,13 @@ public class PlayerController : MonoBehaviour
             if (lookDir != Vector3.zero)
                 transform.forward = lookDir;
         }
-
-        // 멈춤 처리
-        _agent.ResetPath();
-        _agent.velocity = Vector3.zero;
         
         // 이동/회전 제한은 Animator 상태 검사(IsPlayingAttackAnimation)를 통해 이뤄집니다.
     }
 
     private void CancelAttack()
     {
-        // CancelAttack 호출 시 강제로 공격 상태 해제 및 _hasQueuedMove 상태 검토
+        // CancelAttack 호출 시 강제로 공격 상태 해제
         _isAttacking = false;
     }
 }
