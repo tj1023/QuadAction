@@ -138,6 +138,11 @@ public class PlayerWeaponManager : MonoBehaviour
             _animator.PlayAttackAnimation(_currentWeapon.Data.attackType);
         }
     }
+
+    public bool CanAttackCurrentWeapon()
+    {
+        return _currentWeapon &&  _currentWeapon.CanAttack();
+    }
     
     public void TryReload()
     {

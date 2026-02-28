@@ -16,7 +16,7 @@ MonoBehaviour:
   attackType: 1
   weaponName: SubMachineGun
   attackPower: 5
-  attackRate: 0.5
+  attackRate: 0.1
   maxAmmo: 30
   weaponPrefab: {fileID: 547435428816858648, guid: 203326381d9b54d489646c6c2f61f53a, type: 3}
   dropPrefab: {fileID: 3223043723327094020, guid: b887435a901ce2046acf855a83196017, type: 3}

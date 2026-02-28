@@ -20,13 +20,7 @@ public class Weapon : MonoBehaviour
             return false;
 
         // 2. 원거리 무기인데 탄창이 비었는지 체크
-        if (Data.attackType == WeaponData.AttackType.Ranged && Data.slot == 0 && CurrentAmmo <= 0)
-        {
-            Debug.Log("탄창이 비었습니다! 장전이 필요합니다.");
-            return false;
-        }
-
-        return true;
+        return !(Data.attackType == WeaponData.AttackType.Ranged && Data.slot == 0 && CurrentAmmo <= 0);
     }
     
     public void PerformAttack()

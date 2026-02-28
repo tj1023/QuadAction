@@ -40,6 +40,7 @@ public class PlayerController : MonoBehaviour
     private bool _wasMoving;
     private Vector3 _queuedPos;
     private bool _hasQueuedMove;
+    private bool _isAttacking;
     
     private void Awake()
     {
@@ -79,6 +80,7 @@ public class PlayerController : MonoBehaviour
 
         fireAction.action.Enable();
         fireAction.action.performed += OnFire;
+        fireAction.action.canceled += OnFireCanceled;
         
         reLoadAction.action.Enable();
         reLoadAction.action.performed += OnReLoad;
@@ -109,6 +111,7 @@ public class PlayerController : MonoBehaviour
         
         fireAction.action.Disable();
         fireAction.action.performed -= OnFire;
+        fireAction.action.canceled -= OnFireCanceled;
         
         reLoadAction.action.Disable();
         reLoadAction.action.performed -= OnReLoad;
@@ -124,6 +127,34 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
+            if (_animator && _animator.IsPlayingAttackAnimation())
+            {
+                // 공격 중에는 이동 멈춤 유지
+                _agent.velocity = Vector3.zero;
+
+                // 공격 중에도 마우스 방향으로 회전 가능하도록 업데이트
+                if (GetMouseGroundPosition(out Vector3 mousePos))
+                {
+                    Vector3 lookDir = (mousePos - transform.position).normalized;
+                    lookDir.y = 0;
+                    if (lookDir != Vector3.zero)
+                        transform.forward = lookDir;
+                }
+            }
+            else
+            {
+                if (_hasQueuedMove)
+                {
+                    _agent.SetDestination(_queuedPos);
+                    _hasQueuedMove = false;
+                }
+            }
+
+            // 연속 공격 로직은 이동 제한과 독립적으로 매 프레임 검사
+            // 안 그러면 이전 공격 애니메이션이 완전히 끝나기 전까지 다음 공격이 블록되어 연사 속도가 느려짐
+            if (_isAttacking && _weaponManager && _weaponManager.CanAttackCurrentWeapon())
+                StartAttack();
+
             // 멈춤<->이동 상태가 변할 때 1번만 애니메이터 부름
             bool isMoving = _agent.velocity.magnitude > 0.1f;
             if (isMoving != _wasMoving)
@@ -138,8 +169,8 @@ public class PlayerController : MonoBehaviour
     {
         if (GetMouseGroundPosition(out Vector3 targetPos))
         {
-            // dodge 중이라면 예약 걸어둠
-            if (_isDodging)
+            // dodge 중이거나 공격 중이라면 예약 걸어둠
+            if (_isDodging || (_animator && _animator.IsPlayingAttackAnimation()))
             {
                 _hasQueuedMove = true;
                 _queuedPos = targetPos;
@@ -181,6 +212,7 @@ public class PlayerController : MonoBehaviour
     private void OnSwapWeapon(InputAction.CallbackContext context)
     {
         if (_isDodging || _weaponManager == null) return;
+        CancelAttack();
         
         float scrollValue = context.ReadValue<Vector2>().y;
         if (scrollValue > 0) _weaponManager.SwapWeapon(1);
@@ -193,11 +225,25 @@ public class PlayerController : MonoBehaviour
 
     private void OnFire(InputAction.CallbackContext context)
     {
-        _weaponManager?.TryAttack();
+        _isAttacking = true;
+        
+        if (_isDodging) return;
+        
+        // WeaponManager의 CanAttack은 attackRate 체크
+        if (_weaponManager != null && _weaponManager.CanAttackCurrentWeapon())
+        {
+            StartAttack();
+        }
+    }
+    
+    private void OnFireCanceled(InputAction.CallbackContext context)
+    {
+        _isAttacking = false;
     }
     
     private void OnReLoad(InputAction.CallbackContext context)
     {
+        CancelAttack();
         _weaponManager?.TryReload();
     }
     
@@ -219,6 +265,7 @@ public class PlayerController : MonoBehaviour
         _isDodging = true;
         _nextDodgeTime = Time.time + dodgeCooldown;
         _hasQueuedMove = false;
+        CancelAttack();
 
         if (_animator)
         {
@@ -245,6 +292,33 @@ public class PlayerController : MonoBehaviour
     private void EquipSlot(int index)
     {
         if (_isDodging || _weaponManager == null) return;
+        CancelAttack();
         _weaponManager.EquipWeaponByIndex(index);
+    }
+
+    private void StartAttack()
+    {
+        _weaponManager.TryAttack();
+        
+        // 마우스 방향으로 즉시 회전
+        if (GetMouseGroundPosition(out Vector3 mousePos))
+        {
+            Vector3 lookDir = (mousePos - transform.position).normalized;
+            lookDir.y = 0;
+            if (lookDir != Vector3.zero)
+                transform.forward = lookDir;
+        }
+
+        // 멈춤 처리
+        _agent.ResetPath();
+        _agent.velocity = Vector3.zero;
+        
+        // 이동/회전 제한은 Animator 상태 검사(IsPlayingAttackAnimation)를 통해 이뤄집니다.
+    }
+
+    private void CancelAttack()
+    {
+        // CancelAttack 호출 시 강제로 공격 상태 해제 및 _hasQueuedMove 상태 검토
+        _isAttacking = false;
     }
 }

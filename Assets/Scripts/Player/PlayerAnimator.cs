@@ -7,9 +7,6 @@ public class PlayerAnimator : MonoBehaviour
     private static readonly int IsMovingHash = Animator.StringToHash("IsMoving");
     private static readonly int DoDodge = Animator.StringToHash("DoDodge");
     private static readonly int DoSwap = Animator.StringToHash("DoSwap");
-    private static readonly int DoSwing = Animator.StringToHash("DoSwing");
-    private static readonly int DoShot = Animator.StringToHash("DoShot");
-    private static readonly int DoThrow = Animator.StringToHash("DoThrow");
     private static readonly int DoReload = Animator.StringToHash("DoReload");
 
     private const int UpperBodyLayerIndex = 1;
@@ -55,15 +52,23 @@ public class PlayerAnimator : MonoBehaviour
         switch (attackType)
         {
             case WeaponData.AttackType.Melee:
-                _animator.SetTrigger(DoSwing);
+                _animator.Play("Swing", 0, 0f);
                 break;
             case WeaponData.AttackType.Ranged:
-                _animator.SetTrigger(DoShot);
+                _animator.Play("Shot", 0, 0f);
                 break;
             case WeaponData.AttackType.Throwable:
-                _animator.SetTrigger(DoThrow);
+                _animator.Play("Throw", 0, 0f);
                 break;
         }
+    }
+
+    public bool IsPlayingAttackAnimation()
+    {
+        if (_animator == null) return false;
+        
+        AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
+        return stateInfo.IsName("Swing") || stateInfo.IsName("Shot") || stateInfo.IsName("Throw");
     }
     
     public void PlayReloadAnimation()
