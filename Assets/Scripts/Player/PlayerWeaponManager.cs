@@ -4,6 +4,7 @@ using UnityEngine;
 public class PlayerWeaponManager : MonoBehaviour
 {
     [SerializeField] private Transform weaponSlot;
+    [SerializeField] private Transform firePoint;
 
     private PlayerAnimator _animator;
     private Weapon[] _equippedWeapons;
@@ -134,6 +135,10 @@ public class PlayerWeaponManager : MonoBehaviour
         {
             _animator.CancelReloadAnimation();
             _currentWeapon.PerformAttack();
+            
+            if (_currentWeapon.Data.attackType == WeaponData.AttackType.Ranged)
+                SpawnBullet(_currentWeapon.Data);
+            
             UpdateAmmoUI();
             _animator.PlayAttackAnimation(_currentWeapon.Data.attackType);
             
@@ -175,5 +180,16 @@ public class PlayerWeaponManager : MonoBehaviour
     private static bool IsPrimaryRangedWeapon(Weapon weapon)
     {
         return weapon && weapon.Data.slot == 0 && weapon.Data.attackType == WeaponData.AttackType.Ranged ;
+    }
+
+    private void SpawnBullet(WeaponData data)
+    {
+        if (data.bulletPrefab == null || firePoint == null) return;
+
+        GameObject bulletObj = Instantiate(data.bulletPrefab, firePoint.position, firePoint.rotation);
+        if (bulletObj.TryGetComponent(out Bullet bullet))
+        {
+            bullet.Initialize(data.attackPower, data.bulletSpeed, firePoint.forward);
+        }
     }
 }

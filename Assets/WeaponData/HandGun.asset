@@ -18,6 +18,8 @@ MonoBehaviour:
   attackPower: 5
   attackRate: 0.3
   maxAmmo: 0
+  bulletPrefab: {fileID: 8094185768026117911, guid: 15e89cf230278aa4c8b1e5e9c8ab176d, type: 3}
+  bulletSpeed: 30
   weaponPrefab: {fileID: 1509416925549156319, guid: a2e051660762cbe4494c17a095a95e10, type: 3}
   dropPrefab: {fileID: 6817520062330314810, guid: eea71867d65907045a92d15670981d45, type: 3}
   weaponIcon: {fileID: 21300000, guid: 3260f72e5b6eec24587b9132cb1ae0a0, type: 3}

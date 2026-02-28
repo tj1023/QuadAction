@@ -16,6 +16,10 @@ public class WeaponData : ScriptableObject
     public float attackRate;
     public int maxAmmo;
 
+    [Header("Projectile (Ranged Only)")]
+    public GameObject bulletPrefab;
+    public float bulletSpeed = 30f;
+
     [Header("Visuals")]
     public GameObject weaponPrefab;
     public GameObject dropPrefab;

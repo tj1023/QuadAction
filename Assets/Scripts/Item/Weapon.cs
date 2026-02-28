@@ -10,7 +10,7 @@ public class Weapon : MonoBehaviour
     public void Initialize(WeaponData data, int ammo = 0)
     {
         Data = data;
-        CurrentAmmo = ammo; // 주웠을 때는 0, 장전하면 증가
+        CurrentAmmo = ammo;
     }
     
     public bool CanAttack()
@@ -27,7 +27,6 @@ public class Weapon : MonoBehaviour
     {
         _lastAttackTime = Time.time;
 
-        // 원거리 무기면 탄약 소모
         if (Data.attackType == WeaponData.AttackType.Ranged)
         {
             CurrentAmmo--;
