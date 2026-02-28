@@ -136,6 +136,10 @@ public class PlayerWeaponManager : MonoBehaviour
             _currentWeapon.PerformAttack();
             UpdateAmmoUI();
             _animator.PlayAttackAnimation(_currentWeapon.Data.attackType);
+            
+            // 공격 후, 남은 총알이 0개라면 자동 장전 시도
+            if (IsPrimaryRangedWeapon(_currentWeapon) && _currentWeapon.CurrentAmmo <= 0)
+                TryReload();
         }
     }
 
