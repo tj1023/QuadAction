@@ -21,12 +21,14 @@ public class UIWeaponSlot : MonoBehaviour
     {
         EventManager.OnWeaponAdded += UpdateSlotIcon;
         EventManager.OnWeaponEquipped += HighlightSlot;
+        EventManager.OnWeaponRemoved += ClearSlotIcon;
     }
 
     private void OnDisable()
     {
         EventManager.OnWeaponAdded -= UpdateSlotIcon;
         EventManager.OnWeaponEquipped -= HighlightSlot;
+        EventManager.OnWeaponRemoved -= ClearSlotIcon;
     }
     
     // 무기를 먹었을 때 아이콘 갱신
@@ -49,5 +51,13 @@ public class UIWeaponSlot : MonoBehaviour
                 weaponSlots[i].slotNumImage.color = isSelected ? selectedColor : unselectedColor;
             }
         }
+    }
+
+    private void ClearSlotIcon(int slotIndex)
+    {
+        if (slotIndex < 0 || slotIndex >= weaponSlots.Length) return;
+        
+        weaponSlots[slotIndex].iconImage.sprite = null;
+        weaponSlots[slotIndex].iconImage.enabled = false;
     }
 }

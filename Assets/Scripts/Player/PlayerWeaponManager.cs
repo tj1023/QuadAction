@@ -136,13 +136,21 @@ public class PlayerWeaponManager : MonoBehaviour
             _animator.CancelReloadAnimation();
             _currentWeapon.PerformAttack();
             
-            if (_currentWeapon.Data.attackType == WeaponData.AttackType.Ranged)
-                SpawnBullet(_currentWeapon.Data);
+            WeaponData data = _currentWeapon.Data;
+            
+            switch (data.attackType)
+            {
+                case WeaponData.AttackType.Ranged:
+                    SpawnBullet(data);
+                    break;
+                case WeaponData.AttackType.Throwable:
+                    ThrowGrenade(data);
+                    break;
+            }
             
             UpdateAmmoUI();
-            _animator.PlayAttackAnimation(_currentWeapon.Data.attackType);
+            _animator.PlayAttackAnimation(data.attackType);
             
-            // 공격 후, 남은 총알이 0개라면 자동 장전 시도
             if (IsPrimaryRangedWeapon(_currentWeapon) && _currentWeapon.CurrentAmmo <= 0)
                 TryReload();
         }
@@ -196,7 +204,6 @@ public class PlayerWeaponManager : MonoBehaviour
     {
         if (data.bulletPrefab == null || firePoint == null) return;
 
-        // Y축 제거하여 항상 수평으로 발사
         Vector3 direction = firePoint.forward;
         direction.y = 0;
         direction.Normalize();
@@ -205,6 +212,60 @@ public class PlayerWeaponManager : MonoBehaviour
         if (bulletObj.TryGetComponent(out Bullet bullet))
         {
             bullet.Initialize(data.attackPower, data.bulletSpeed, direction, data.knockbackForce);
+        }
+    }
+
+    private void ThrowGrenade(WeaponData data)
+    {
+        if (data.grenadePrefab == null || firePoint == null) return;
+
+        Vector3 spawnPos = firePoint.position;
+
+        // 마우스 위치로 레이캐스트
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (!Physics.Raycast(ray, out RaycastHit hit, 100f))
+            return;
+
+        Vector3 targetPos = hit.point;
+        float gravity = Mathf.Abs(Physics.gravity.y);
+
+        Vector3 toTarget = targetPos - spawnPos;
+        float horizontalDist = new Vector3(toTarget.x, 0, toTarget.z).magnitude;
+
+        // 아크 높이를 거리에 비례 (가까울수록 낮은 아크 = 빠른 도착)
+        float arcHeight = Mathf.Max(horizontalDist * 0.01f, 0.3f);
+        float peakY = Mathf.Max(spawnPos.y, targetPos.y) + arcHeight;
+
+        // 수직 속도: 정점까지 올라가는 데 필요한 초기 vy
+        float dyUp = peakY - spawnPos.y;
+        float vy = Mathf.Sqrt(2f * gravity * dyUp);
+
+        // 올라가는 시간 + 내려오는 시간 = 총 비행 시간
+        float tUp = vy / gravity;
+        float dyDown = peakY - targetPos.y;
+        float tDown = Mathf.Sqrt(2f * dyDown / gravity);
+        float totalTime = tUp + tDown;
+
+        // 수평 속도: 총 비행시간 동안 수평거리를 커버
+        Vector3 horizontal = new Vector3(toTarget.x, 0, toTarget.z);
+        Vector3 horizontalVelocity = horizontal / totalTime;
+
+        Vector3 velocity = horizontalVelocity + Vector3.up * vy;
+
+        GameObject grenadeObj = Instantiate(data.grenadePrefab, spawnPos, Quaternion.identity);
+        if (grenadeObj.TryGetComponent(out ThrownGrenade grenade))
+        {
+            grenade.Initialize(data.attackPower, data.knockbackForce, data.explosionRadius, velocity);
+        }
+
+        // 투척 무기는 1회성 — 슬롯에서 제거
+        int slotIndex = (int)data.slot;
+        if (_equippedWeapons[slotIndex])
+        {
+            Destroy(_equippedWeapons[slotIndex].gameObject);
+            _equippedWeapons[slotIndex] = null;
+            _currentWeapon = null;
+            EventManager.OnWeaponRemoved?.Invoke(slotIndex);
         }
     }
 }

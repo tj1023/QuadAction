@@ -108,7 +108,6 @@ public class EnemyController : MonoBehaviour
 
     public void OnDeath()
     {
-        // NavMeshAgent를 끄지 않고 멈추기만 해서 바닥 위에 유지
         _agent.isStopped = true;
         _agent.ResetPath();
         _agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
@@ -117,10 +116,44 @@ public class EnemyController : MonoBehaviour
         _animator?.SetMoving(false);
         _animator?.TriggerDeath();
 
-        // 죽은 적이 다른 오브젝트를 막지 않도록 콜라이더 비활성화
         if (TryGetComponent(out Collider col))
             col.enabled = false;
 
         Destroy(gameObject, 2f);
+    }
+
+    public void LaunchRagdoll(Vector3 explosionPos, float force)
+    {
+        // NavMeshAgent 잔여 속도 제거 후 비활성화
+        _agent.velocity = Vector3.zero;
+        _agent.isStopped = true;
+        _agent.enabled = false;
+
+        // 진행 중인 넉백 코루틴 중단
+        StopAllCoroutines();
+
+        Animator anim = GetComponentInChildren<Animator>();
+        if (anim) anim.enabled = false;
+
+        if (TryGetComponent(out Collider col))
+        {
+            col.enabled = true;
+            col.isTrigger = false;
+        }
+
+        if (TryGetComponent(out Rigidbody rb))
+        {
+            rb.isKinematic = false;
+            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+            rb.constraints = RigidbodyConstraints.None;
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+
+            Vector3 reactVec = (transform.position - explosionPos).normalized;
+            reactVec += Vector3.up * 3f;
+
+            rb.AddForce(reactVec * force, ForceMode.Impulse);
+            rb.AddTorque(reactVec * force * 3f, ForceMode.Impulse);
+        }
     }
 }

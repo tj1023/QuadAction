@@ -199,7 +199,7 @@ GameObject:
   - component: {fileID: 3079241062717969405}
   - component: {fileID: 2614403925574728799}
   - component: {fileID: 4062114354709337005}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Weapon HandGun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
