@@ -7,14 +7,6 @@ public class PlayerStats : MonoBehaviour, IDamageable
     private int _currentHp;
     private int _currentMoney;
     
-    // UI나 다른 시스템에서 구독(Subscribe)할 이벤트들
-    public event Action<int, int> OnHpChanged;
-    public event Action<int> OnMoneyChanged;
-    public event Action OnPlayerDeath;
-    
-    public int CurrentHp => _currentHp;
-    public int CurrentMoney => _currentMoney;
-    
     private void Awake()
     {
         _currentHp = maxHp;
@@ -22,9 +14,8 @@ public class PlayerStats : MonoBehaviour, IDamageable
     
     private void Start()
     {
-        // 시작 시 UI 초기화를 위해 이벤트 한 번 호출
-        OnHpChanged?.Invoke(_currentHp, maxHp);
-        OnMoneyChanged?.Invoke(_currentMoney);
+        EventManager.OnHpChanged?.Invoke(_currentHp, maxHp);
+        EventManager.OnMoneyChanged?.Invoke(_currentMoney);
     }
     
     // --- HP 관련 메서드 ---
@@ -34,8 +25,8 @@ public class PlayerStats : MonoBehaviour, IDamageable
 
         _currentHp -= damage;
         _currentHp = Mathf.Clamp(_currentHp, 0, maxHp);
-
-        OnHpChanged?.Invoke(_currentHp, maxHp);
+        
+        EventManager.OnHpChanged?.Invoke(_currentHp, maxHp);
 
         if (_currentHp <= 0)
             Die();
@@ -47,14 +38,13 @@ public class PlayerStats : MonoBehaviour, IDamageable
 
         _currentHp += amount;
         _currentHp = Mathf.Clamp(_currentHp, 0, maxHp);
-
-        OnHpChanged?.Invoke(_currentHp, maxHp);
+        
+        EventManager.OnHpChanged?.Invoke(_currentHp, maxHp);
     }
     
     private void Die()
     {
         Debug.Log("플레이어 사망!");
-        OnPlayerDeath?.Invoke();
         // 사망 애니메이션 재생, 게임 오버 처리 등 추가
     }
     
@@ -62,7 +52,7 @@ public class PlayerStats : MonoBehaviour, IDamageable
     public void AddMoney(int amount)
     {
         _currentMoney += amount;
-        OnMoneyChanged?.Invoke(_currentMoney);
+        EventManager.OnMoneyChanged?.Invoke(_currentMoney);
     }
 
     public bool SpendMoney(int amount)
@@ -70,7 +60,7 @@ public class PlayerStats : MonoBehaviour, IDamageable
         if (_currentMoney >= amount)
         {
             _currentMoney -= amount;
-            OnMoneyChanged?.Invoke(_currentMoney);
+            EventManager.OnMoneyChanged?.Invoke(_currentMoney);
             return true; // 구매 성공
         }
         
