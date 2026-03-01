@@ -55,9 +55,8 @@ public class ThrownGrenade : MonoBehaviour
 
             if (hit.TryGetComponent(out EnemyStats enemyStats))
             {
-                enemyStats.OnHit(_damage, hitDir, _knockbackForce);
+                enemyStats.OnHit(_damage, hitDir, _knockbackForce, willRagdoll: true);
 
-                // 죽은 적은 날아가게
                 if (enemyStats.IsDead && hit.TryGetComponent(out EnemyController controller))
                     controller.LaunchRagdoll(transform.position, _knockbackForce);
             }

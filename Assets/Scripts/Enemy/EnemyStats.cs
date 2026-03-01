@@ -40,18 +40,24 @@ public class EnemyStats : MonoBehaviour, IDamageable
             Die();
     }
 
-    public void OnHit(int damage, Vector3 hitDirection, float knockbackForce)
+    public void OnHit(int damage, Vector3 hitDirection, float knockbackForce, bool willRagdoll = false)
     {
-        TakeDamage(damage);
+        if (IsDead) return;
 
-        if (!IsDead)
+        CurrentHp -= damage;
+        CurrentHp = Mathf.Max(CurrentHp, 0);
+
+        if (CurrentHp <= 0)
         {
-            StartCoroutine(FlashRed());
-
-            float effectiveForce = knockbackForce - data.knockbackResistance;
-            if (effectiveForce > 0f)
-                ApplyKnockback(hitDirection, effectiveForce);
+            Die(willRagdoll);
+            return;
         }
+
+        StartCoroutine(FlashRed());
+
+        float effectiveForce = knockbackForce - data.knockbackResistance;
+        if (effectiveForce > 0f)
+            ApplyKnockback(hitDirection, effectiveForce);
     }
 
     private IEnumerator FlashRed()
@@ -98,12 +104,11 @@ public class EnemyStats : MonoBehaviour, IDamageable
         _agent.isStopped = false;
     }
 
-    private void Die()
+    private void Die(bool willRagdoll = false)
     {
         IsDead = true;
         StopAllCoroutines();
 
-        // 사망 시 회색으로 변경
         foreach (var r in _renderers)
         {
             if (r != null)
@@ -111,6 +116,6 @@ public class EnemyStats : MonoBehaviour, IDamageable
         }
 
         if (TryGetComponent(out EnemyController controller))
-            controller.OnDeath();
+            controller.OnDeath(willRagdoll);
     }
 }

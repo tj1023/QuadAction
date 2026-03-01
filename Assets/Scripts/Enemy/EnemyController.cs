@@ -106,7 +106,7 @@ public class EnemyController : MonoBehaviour
             target.TakeDamage(data.attackPower);
     }
 
-    public void OnDeath()
+    public void OnDeath(bool willRagdoll = false)
     {
         _agent.isStopped = true;
         _agent.ResetPath();
@@ -114,12 +114,16 @@ public class EnemyController : MonoBehaviour
 
         _currentState = State.Idle;
         _animator?.SetMoving(false);
-        _animator?.TriggerDeath();
 
-        if (TryGetComponent(out Collider col))
-            col.enabled = false;
+        if (!willRagdoll)
+        {
+            _animator?.TriggerDeath();
 
-        Destroy(gameObject, 2f);
+            if (TryGetComponent(out Collider col))
+                col.enabled = false;
+        }
+
+        Destroy(gameObject, willRagdoll ? 5f : 2f);
     }
 
     public void LaunchRagdoll(Vector3 explosionPos, float force)
