@@ -8,6 +8,7 @@ public class PlayerAnimator : MonoBehaviour
     private static readonly int DoDodge = Animator.StringToHash("DoDodge");
     private static readonly int DoSwap = Animator.StringToHash("DoSwap");
     private static readonly int DoReload = Animator.StringToHash("DoReload");
+    private static readonly int DoDeath = Animator.StringToHash("DoDeath");
 
     private const int UpperBodyLayerIndex = 1;
     
@@ -80,5 +81,10 @@ public class PlayerAnimator : MonoBehaviour
     {
         _animator.ResetTrigger(DoReload);
         _animator.CrossFade("Empty", 0.1f, 1);
+    }
+
+    public void TriggerDeath()
+    {
+        _animator.SetTrigger(DoDeath);
     }
 }

@@ -1,7 +1,9 @@
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(NavMeshObstacle))]
 public class PlayerController : MonoBehaviour
 {
     [Header("Input Actions")]
@@ -39,6 +41,7 @@ public class PlayerController : MonoBehaviour
     private bool _isDodging;
     private bool _wasMoving;
     private bool _isAttacking;
+    private bool _isDead;
     private float _verticalVelocity;
     
     private void Awake()
@@ -78,6 +81,8 @@ public class PlayerController : MonoBehaviour
         
         reLoadAction.action.Enable();
         reLoadAction.action.performed += OnReLoad;
+
+        EventManager.OnPlayerDeath += OnDeath;
     }
 
     private void OnDisable()
@@ -108,15 +113,23 @@ public class PlayerController : MonoBehaviour
         
         reLoadAction.action.Disable();
         reLoadAction.action.performed -= OnReLoad;
+
+        EventManager.OnPlayerDeath -= OnDeath;
     }
 
     private void Update()
     {
-        // 중력 처리
+        // 중력 처리 (사망 후에도 바닥 유지를 위해 항상 적용)
         if (_controller.isGrounded && _verticalVelocity < 0f)
             _verticalVelocity = -2f; // 약간의 아래 힘으로 바닥에 밀착
         else
             _verticalVelocity += gravity * Time.deltaTime;
+
+        if (_isDead)
+        {
+            _controller.Move(new Vector3(0f, _verticalVelocity * Time.deltaTime, 0f));
+            return;
+        }
 
         if (_isDodging)
         {
@@ -309,7 +322,14 @@ public class PlayerController : MonoBehaviour
 
     private void CancelAttack()
     {
-        // CancelAttack 호출 시 강제로 공격 상태 해제
         _isAttacking = false;
+    }
+
+    private void OnDeath()
+    {
+        _isDead = true;
+        _isAttacking = false;
+        _isDodging = false;
+        _animator?.SetMoving(false);
     }
 }

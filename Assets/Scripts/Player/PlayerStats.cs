@@ -44,8 +44,10 @@ public class PlayerStats : MonoBehaviour, IDamageable
     
     private void Die()
     {
-        Debug.Log("플레이어 사망!");
-        // 사망 애니메이션 재생, 게임 오버 처리 등 추가
+        EventManager.OnPlayerDeath?.Invoke();
+
+        if (TryGetComponent(out PlayerAnimator animator))
+            animator.TriggerDeath();
     }
     
     // --- 경제(돈) 관련 메서드 ---

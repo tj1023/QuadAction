@@ -7,4 +7,5 @@ public static class EventManager
     public static Action<int, int> OnAmmoChanged;
     public static Action<int, int> OnHpChanged;
     public static Action<int> OnMoneyChanged;
+    public static Action OnPlayerDeath;
 }
