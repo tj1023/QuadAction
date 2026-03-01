@@ -13,3 +13,9 @@ public interface ICollectible
 {
     void Collect(GameObject collector);
 }
+
+// 데미지를 받을 수 있는 오브젝트용
+public interface IDamageable
+{
+    void TakeDamage(int damage);
+}

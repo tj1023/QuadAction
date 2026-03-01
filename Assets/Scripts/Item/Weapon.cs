@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
+    [SerializeField] private MeleeHitbox meleeHitbox;
+
     public WeaponData Data { get; private set; }
     public int CurrentAmmo { get; private set; }
     
@@ -35,6 +37,18 @@ public class Weapon : MonoBehaviour
         {
             // 투척 무기는 1회성이므로 탄약을 쓰지 않고 매니저에서 즉시 파괴/슬롯 비움 처리
         }
+    }
+
+    public void EnableHitbox()
+    {
+        if (meleeHitbox != null)
+            meleeHitbox.Activate(Data.attackPower, Data.knockbackForce);
+    }
+
+    public void DisableHitbox()
+    {
+        if (meleeHitbox != null)
+            meleeHitbox.Deactivate();
     }
 
     public void FillAmmo(int amount)

@@ -6,6 +6,7 @@ public class Bullet : MonoBehaviour
     [SerializeField] private float lifeTime = 5f;
 
     private int _damage;
+    private float _knockbackForce;
     private Rigidbody _rb;
 
     private void Awake()
@@ -13,9 +14,10 @@ public class Bullet : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
     }
 
-    public void Initialize(int damage, float speed, Vector3 direction)
+    public void Initialize(int damage, float speed, Vector3 direction, float knockbackForce)
     {
         _damage = damage;
+        _knockbackForce = knockbackForce;
         _rb.useGravity = false;
         _rb.linearVelocity = direction.normalized * speed;
         Destroy(gameObject, lifeTime);
@@ -23,12 +25,14 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // 자기 자신(플레이어)과 충돌 무시
         if (other.CompareTag("Player")) return;
 
-        // TODO: 대상에게 데미지
-        // if (other.TryGetComponent(out IDamageable target))
-        //     target.TakeDamage(_damage);
+        Vector3 hitDirection = _rb.linearVelocity.normalized;
+
+        if (other.TryGetComponent(out EnemyStats enemyStats))
+            enemyStats.OnHit(_damage, hitDirection, _knockbackForce);
+        else if (other.TryGetComponent(out IDamageable target))
+            target.TakeDamage(_damage);
 
         Destroy(gameObject);
     }

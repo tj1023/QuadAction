@@ -152,6 +152,16 @@ public class PlayerWeaponManager : MonoBehaviour
     {
         return _currentWeapon &&  _currentWeapon.CanAttack();
     }
+
+    public void EnableMeleeHitbox()
+    {
+        _currentWeapon?.EnableHitbox();
+    }
+
+    public void DisableMeleeHitbox()
+    {
+        _currentWeapon?.DisableHitbox();
+    }
     
     public void TryReload()
     {
@@ -186,10 +196,15 @@ public class PlayerWeaponManager : MonoBehaviour
     {
         if (data.bulletPrefab == null || firePoint == null) return;
 
-        GameObject bulletObj = Instantiate(data.bulletPrefab, firePoint.position, firePoint.rotation);
+        // Y축 제거하여 항상 수평으로 발사
+        Vector3 direction = firePoint.forward;
+        direction.y = 0;
+        direction.Normalize();
+
+        GameObject bulletObj = Instantiate(data.bulletPrefab, firePoint.position, Quaternion.LookRotation(direction));
         if (bulletObj.TryGetComponent(out Bullet bullet))
         {
-            bullet.Initialize(data.attackPower, data.bulletSpeed, firePoint.forward);
+            bullet.Initialize(data.attackPower, data.bulletSpeed, direction, data.knockbackForce);
         }
     }
 }

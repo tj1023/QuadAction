@@ -295,9 +295,7 @@ public class PlayerController : MonoBehaviour
 
     private void StartAttack()
     {
-        _weaponManager.TryAttack();
-        
-        // 마우스 방향으로 즉시 회전
+        // 마우스 방향으로 먼저 회전 (총알이 올바른 방향으로 나가도록)
         if (GetMouseGroundPosition(out Vector3 mousePos))
         {
             Vector3 lookDir = (mousePos - transform.position).normalized;
@@ -305,8 +303,8 @@ public class PlayerController : MonoBehaviour
             if (lookDir != Vector3.zero)
                 transform.forward = lookDir;
         }
-        
-        // 이동/회전 제한은 Animator 상태 검사(IsPlayingAttackAnimation)를 통해 이뤄집니다.
+
+        _weaponManager.TryAttack();
     }
 
     private void CancelAttack()

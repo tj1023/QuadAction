@@ -20,4 +20,14 @@ public class AnimationEventHandler : MonoBehaviour
     {
         _weaponManager?.ExecuteReload();
     }
+
+    public void OnSwingStart()
+    {
+        _weaponManager?.EnableMeleeHitbox();
+    }
+
+    public void OnSwingEnd()
+    {
+        _weaponManager?.DisableMeleeHitbox();
+    }
 }

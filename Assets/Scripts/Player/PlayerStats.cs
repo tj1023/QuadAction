@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class PlayerStats : MonoBehaviour
+public class PlayerStats : MonoBehaviour, IDamageable
 {
     [SerializeField] private int maxHp = 100;
     private int _currentHp;
@@ -38,9 +38,7 @@ public class PlayerStats : MonoBehaviour
         OnHpChanged?.Invoke(_currentHp, maxHp);
 
         if (_currentHp <= 0)
-        {
             Die();
-        }
     }
     
     public void Heal(int amount)

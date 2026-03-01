@@ -15,6 +15,7 @@ public class WeaponData : ScriptableObject
     public int attackPower;
     public float attackRate;
     public int maxAmmo;
+    public float knockbackForce = 5f;
 
     [Header("Projectile (Ranged Only)")]
     public GameObject bulletPrefab;
