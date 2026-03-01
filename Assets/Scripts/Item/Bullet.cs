@@ -8,6 +8,7 @@ public class Bullet : MonoBehaviour
     private int _damage;
     private float _knockbackForce;
     private Rigidbody _rb;
+    private float _deactivateTime;
 
     private void Awake()
     {
@@ -20,7 +21,13 @@ public class Bullet : MonoBehaviour
         _knockbackForce = knockbackForce;
         _rb.useGravity = false;
         _rb.linearVelocity = direction.normalized * speed;
-        Destroy(gameObject, lifeTime);
+        _deactivateTime = Time.time + lifeTime;
+    }
+
+    private void Update()
+    {
+        if (Time.time >= _deactivateTime)
+            ReturnToPool();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -34,6 +41,15 @@ public class Bullet : MonoBehaviour
         else if (other.TryGetComponent(out IDamageable target))
             target.TakeDamage(_damage);
 
-        Destroy(gameObject);
+        ReturnToPool();
+    }
+
+    private void ReturnToPool()
+    {
+        _rb.linearVelocity = Vector3.zero;
+        if (ObjectPool.Instance)
+            ObjectPool.Instance.Release(gameObject);
+        else
+            gameObject.SetActive(false);
     }
 }

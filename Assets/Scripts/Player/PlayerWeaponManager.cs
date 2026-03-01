@@ -208,7 +208,7 @@ public class PlayerWeaponManager : MonoBehaviour
         direction.y = 0;
         direction.Normalize();
 
-        GameObject bulletObj = Instantiate(data.bulletPrefab, firePoint.position, Quaternion.LookRotation(direction));
+        GameObject bulletObj = ObjectPool.Instance.Get(data.bulletPrefab, firePoint.position, Quaternion.LookRotation(direction));
         if (bulletObj.TryGetComponent(out Bullet bullet))
         {
             bullet.Initialize(data.attackPower, data.bulletSpeed, direction, data.knockbackForce);
