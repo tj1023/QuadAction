@@ -5,7 +5,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(EnemyStats))]
 public class EnemyController : MonoBehaviour
 {
-    private enum State { Idle, Chase, Attack }
+    private enum State { Idle, Chase, Attack, Dash }
     
     [SerializeField] private EnemyMeleeHitbox meleeHitbox;
     private NavMeshAgent _agent;
@@ -16,12 +16,14 @@ public class EnemyController : MonoBehaviour
     private State _currentState = State.Idle;
     private float _lastAttackTime;
     private float _attackLockUntil;
-
+    private float _originalAcceleration;
+    
     private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
         _stats = GetComponent<EnemyStats>();
         _enemyAnimator = GetComponent<EnemyAnimator>();
+        _originalAcceleration = _agent.acceleration;
     }
 
     private void Start()
@@ -55,6 +57,8 @@ public class EnemyController : MonoBehaviour
         // 상태 전환
         if (distance <= data.attackRange)
             ChangeState(State.Attack);
+        else if (data.useDash && distance <= data.dashRange)
+            ChangeState(State.Dash);
         else if (distance <= data.chaseRange)
             ChangeState(State.Chase);
         else
@@ -68,6 +72,7 @@ public class EnemyController : MonoBehaviour
                 break;
 
             case State.Chase:
+            case State.Dash:
                 _agent.SetDestination(_player.position);
                 break;
 
@@ -82,9 +87,28 @@ public class EnemyController : MonoBehaviour
     private void ChangeState(State newState)
     {
         if (_currentState == newState) return;
+        
+        EnemyData data = _stats.Data;
+
+        // 이전 상태를 빠져나올 때의 처리 (Dash 해제 시 속도 원상복구)
+        if (_currentState == State.Dash && newState != State.Dash)
+        {
+            _agent.speed = data.moveSpeed;
+            _agent.acceleration = _originalAcceleration;
+        }
+        
         _currentState = newState;
 
-        _enemyAnimator?.SetMoving(newState == State.Chase);
+        // 새로운 상태 진입 시의 처리 (Dash 진입 시 속도 증가)
+        if (_currentState == State.Dash)
+        {
+            _agent.speed = data.dashSpeed;
+            _agent.acceleration = 500f; // 순간적으로 최고 속도에 도달하도록 가속도 대폭 증가
+        }
+
+        // Chase와 Dash 상태 모두 이동 애니메이션(뛰기)을 재생하도록 처리
+        bool isMoving = (newState == State.Chase || newState == State.Dash);
+        _enemyAnimator?.SetMoving(isMoving);
     }
 
     private void LookAtPlayer()

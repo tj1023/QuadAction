@@ -42,12 +42,11 @@ public class EnemyMeleeHitbox : MonoBehaviour
         Destroy(_indicator.GetComponent<MeshCollider>());
 
         // 반투명 빨간 머티리얼
-        var renderer = _indicator.GetComponent<Renderer>();
-        var mat = new Material(Shader.Find("Sprites/Default"));
-        mat.color = indicatorColor;
-        renderer.material = mat;
-        renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-        renderer.receiveShadows = false;
+        var indicatorRenderer = _indicator.GetComponent<Renderer>();
+        var mat = new Material(Shader.Find("Sprites/Default")) { color = indicatorColor };
+        indicatorRenderer.material = mat;
+        indicatorRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        indicatorRenderer.receiveShadows = false;
 
         _indicator.SetActive(false);
     }

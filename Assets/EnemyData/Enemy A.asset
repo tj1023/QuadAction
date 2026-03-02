@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5a6292a05d2364c4cbb9394b9f4d45f6, type: 3}
-  m_Name: Enemy0
+  m_Name: Enemy A
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
   maxHp: 50
   attackPower: 5
@@ -18,3 +18,7 @@ MonoBehaviour:
   moveSpeed: 10
   chaseRange: 30
   attackRange: 5
+  knockbackResistance: 0
+  useDash: 0
+  dashRange: 0
+  dashSpeed: 0

@@ -16,5 +16,10 @@ public class EnemyData : ScriptableObject
     public float attackRange = 2f;
 
     [Header("Hit")]
-    public float knockbackResistance = 0f;
+    public float knockbackResistance;
+    
+    [Header("Dash Attack")]
+    public bool useDash;
+    public float dashRange = 30f;
+    public float dashSpeed = 30f;
 }
