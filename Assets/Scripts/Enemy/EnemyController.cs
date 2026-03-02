@@ -128,9 +128,11 @@ public class EnemyController : MonoBehaviour
 
     public void LaunchRagdoll(Vector3 explosionPos, float force)
     {
-        // NavMeshAgent 잔여 속도 제거 후 비활성화
-        _agent.velocity = Vector3.zero;
-        _agent.isStopped = true;
+        if (_agent.isOnNavMesh && _agent.enabled)
+        {
+            _agent.velocity = Vector3.zero;
+            _agent.isStopped = true;
+        }
         _agent.enabled = false;
 
         // 진행 중인 넉백 코루틴 중단
