@@ -2111,6 +2111,11 @@ MonoBehaviour:
   target: {fileID: 179743227}
   offset: {x: 15, y: 25, z: 15}
   smoothSpeed: 10
+  leadFactor: 0.5
+  maxLeadDistance: 8
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!4 &971395054 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5657882665412638405, guid: eea71867d65907045a92d15670981d45, type: 3}
