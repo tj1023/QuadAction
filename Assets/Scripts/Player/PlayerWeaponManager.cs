@@ -11,12 +11,14 @@ public class PlayerWeaponManager : MonoBehaviour
     private Weapon _currentWeapon;
     private int _ammo;
     private int _maxSlots;
+    private Camera _camera;
 
     private void Awake()
     {
         _animator = GetComponent<PlayerAnimator>();
         _maxSlots = Enum.GetValues(typeof(WeaponData.WeaponSlot)).Length;
         _equippedWeapons = new Weapon[_maxSlots];
+        _camera =  Camera.main;
     }
 
     public void AddWeapon(WeaponData newWeaponData)
@@ -222,7 +224,7 @@ public class PlayerWeaponManager : MonoBehaviour
         Vector3 spawnPos = firePoint.position;
 
         // 마우스 위치로 레이캐스트
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
         if (!Physics.Raycast(ray, out RaycastHit hit, 100f))
             return;
         
