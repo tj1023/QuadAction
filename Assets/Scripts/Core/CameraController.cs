@@ -18,11 +18,26 @@ public class CameraController : MonoBehaviour
     [SerializeField] private float maxLeadDistance = 8f;
     [SerializeField] private LayerMask groundLayer;
 
+    [Header("Camera Shake")]
+    [SerializeField] private float shakeIntensity = 0.5f;
+    [SerializeField] private float shakeDuration = 0.2f;
+
     private Camera _cam;
+    private float _shakeTimer;
 
     private void Awake()
     {
         _cam = GetComponent<Camera>();
+    }
+
+    private void OnEnable()
+    {
+        EventManager.OnPlayerHit += Shake;
+    }
+
+    private void OnDisable()
+    {
+        EventManager.OnPlayerHit -= Shake;
     }
 
     private void LateUpdate()
@@ -33,6 +48,21 @@ public class CameraController : MonoBehaviour
         Vector3 desiredPosition = target.position + offset + leadOffset;
 
         transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
+
+        // 카메라 흔들림 (Lerp 이후 직접 적용)
+        if (_shakeTimer > 0f)
+        {
+            float ratio = _shakeTimer / shakeDuration;
+            Vector3 shakeOffset = Random.insideUnitSphere * (shakeIntensity * ratio);
+            shakeOffset.y = 0;
+            transform.position += shakeOffset;
+            _shakeTimer -= Time.deltaTime;
+        }
+    }
+
+    public void Shake()
+    {
+        _shakeTimer = shakeDuration;
     }
 
     private Vector3 GetMouseLeadOffset()

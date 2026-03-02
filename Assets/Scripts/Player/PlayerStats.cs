@@ -1,15 +1,23 @@
-using System;
+using System.Collections;
 using UnityEngine;
 
 public class PlayerStats : MonoBehaviour, IDamageable
 {
     [SerializeField] private int maxHp = 100;
+    [SerializeField] private float flashDuration = 0.15f;
+
     private int _currentHp;
     private int _currentMoney;
-    
+    private Renderer[] _renderers;
+    private Color[] _originalColors;
+
     private void Awake()
     {
         _currentHp = maxHp;
+        _renderers = GetComponentsInChildren<Renderer>();
+        _originalColors = new Color[_renderers.Length];
+        for (int i = 0; i < _renderers.Length; i++)
+            _originalColors[i] = _renderers[i].material.color;
     }
     
     private void Start()
@@ -18,7 +26,6 @@ public class PlayerStats : MonoBehaviour, IDamageable
         EventManager.OnMoneyChanged?.Invoke(_currentMoney);
     }
     
-    // --- HP 관련 메서드 ---
     public void TakeDamage(int damage)
     {
         if (_currentHp <= 0) return;
@@ -27,6 +34,8 @@ public class PlayerStats : MonoBehaviour, IDamageable
         _currentHp = Mathf.Clamp(_currentHp, 0, maxHp);
         
         EventManager.OnHpChanged?.Invoke(_currentHp, maxHp);
+        EventManager.OnPlayerHit?.Invoke();
+        StartCoroutine(FlashYellow());
 
         if (_currentHp <= 0)
             Die();
@@ -40,6 +49,20 @@ public class PlayerStats : MonoBehaviour, IDamageable
         _currentHp = Mathf.Clamp(_currentHp, 0, maxHp);
         
         EventManager.OnHpChanged?.Invoke(_currentHp, maxHp);
+    }
+
+    private IEnumerator FlashYellow()
+    {
+        foreach (var r in _renderers)
+            r.material.color = Color.yellow;
+
+        yield return new WaitForSeconds(flashDuration);
+
+        for (int i = 0; i < _renderers.Length; i++)
+        {
+            if (_renderers[i] != null)
+                _renderers[i].material.color = _originalColors[i];
+        }
     }
     
     private void Die()
