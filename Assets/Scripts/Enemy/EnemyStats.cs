@@ -8,19 +8,19 @@ public class EnemyStats : MonoBehaviour, IDamageable
     [SerializeField] private float flashDuration = 0.15f;
 
     public EnemyData Data => data;
-    public int CurrentHp { get; private set; }
     public bool IsDead { get; private set; }
 
     private Renderer[] _renderers;
     private Color[] _originalColors;
     private NavMeshAgent _agent;
+    private int _currentHp;
 
     private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
 
         if (data != null)
-            CurrentHp = data.maxHp;
+            _currentHp = data.maxHp;
 
         // 렌더러 + 원본 색상 캐싱
         _renderers = GetComponentsInChildren<Renderer>();
@@ -33,10 +33,10 @@ public class EnemyStats : MonoBehaviour, IDamageable
     {
         if (IsDead) return;
 
-        CurrentHp -= damage;
-        CurrentHp = Mathf.Max(CurrentHp, 0);
+        _currentHp -= damage;
+        _currentHp = Mathf.Max(_currentHp, 0);
 
-        if (CurrentHp <= 0)
+        if (_currentHp <= 0)
             Die();
     }
 
@@ -44,10 +44,10 @@ public class EnemyStats : MonoBehaviour, IDamageable
     {
         if (IsDead) return;
 
-        CurrentHp -= damage;
-        CurrentHp = Mathf.Max(CurrentHp, 0);
+        _currentHp -= damage;
+        _currentHp = Mathf.Max(_currentHp, 0);
 
-        if (CurrentHp <= 0)
+        if (_currentHp <= 0)
         {
             Die(willRagdoll);
             return;

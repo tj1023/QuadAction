@@ -6,10 +6,11 @@ using UnityEngine.AI;
 public class EnemyController : MonoBehaviour
 {
     private enum State { Idle, Chase, Attack }
-
+    
+    [SerializeField] private EnemyMeleeHitbox meleeHitbox;
     private NavMeshAgent _agent;
     private EnemyStats _stats;
-    private EnemyAnimator _animator;
+    private EnemyAnimator _enemyAnimator;
     private Transform _player;
 
     private State _currentState = State.Idle;
@@ -20,7 +21,7 @@ public class EnemyController : MonoBehaviour
     {
         _agent = GetComponent<NavMeshAgent>();
         _stats = GetComponent<EnemyStats>();
-        _animator = GetComponent<EnemyAnimator>();
+        _enemyAnimator = GetComponent<EnemyAnimator>();
     }
 
     private void Start()
@@ -83,7 +84,7 @@ public class EnemyController : MonoBehaviour
         if (_currentState == newState) return;
         _currentState = newState;
 
-        _animator?.SetMoving(newState == State.Chase);
+        _enemyAnimator?.SetMoving(newState == State.Chase);
     }
 
     private void LookAtPlayer()
@@ -99,11 +100,19 @@ public class EnemyController : MonoBehaviour
         if (Time.time - _lastAttackTime < data.attackRate) return;
         _lastAttackTime = Time.time;
         _attackLockUntil = Time.time + data.attackRate;
-        _animator?.TriggerAttack();
+        _enemyAnimator?.TriggerAttack();
+    }
 
-        // 플레이어에게 데미지
-        if (_player.TryGetComponent(out IDamageable target))
-            target.TakeDamage(data.attackPower);
+    public void EnableHitbox()
+    {
+        if (meleeHitbox)
+            meleeHitbox.Activate(_stats.Data.attackPower);
+    }
+
+    public void DisableHitbox()
+    {
+        if (meleeHitbox)
+            meleeHitbox.Deactivate();
     }
 
     public void OnDeath(bool willRagdoll = false)
@@ -113,11 +122,11 @@ public class EnemyController : MonoBehaviour
         _agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
 
         _currentState = State.Idle;
-        _animator?.SetMoving(false);
+        _enemyAnimator?.SetMoving(false);
 
         if (!willRagdoll)
         {
-            _animator?.TriggerDeath();
+            _enemyAnimator?.TriggerDeath();
 
             if (TryGetComponent(out Collider col))
                 col.enabled = false;
