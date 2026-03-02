@@ -37,9 +37,8 @@ public class MeleeHitbox : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // 같은 스윙에서 중복 히트 방지
-        if (_hitTargets.Contains(other.gameObject)) return;
-        _hitTargets.Add(other.gameObject);
+        if (other.CompareTag("Player")) return;
+        if (!_hitTargets.Add(other.gameObject)) return;
 
         if (other.TryGetComponent(out EnemyStats enemyStats))
         {
