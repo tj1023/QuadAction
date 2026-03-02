@@ -86,8 +86,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.5, y: 3, z: 2.5}
-  m_Center: {x: 0, y: 1.5, z: 0.1}
+  m_Size: {x: 2.5, y: 4, z: 2.5}
+  m_Center: {x: 0, y: 2, z: 0.1}
 --- !u!195 &2929707686703240038
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -228,6 +228,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMeleeHitbox
   hitCollider: {fileID: 6767890874403724562}
+  indicatorColor: {r: 1, g: 0, b: 0, a: 0.35}
 --- !u!1001 &3742988097530133252
 PrefabInstance:
   m_ObjectHideFlags: 0
