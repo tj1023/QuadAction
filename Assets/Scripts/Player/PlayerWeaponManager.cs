@@ -225,7 +225,7 @@ public class PlayerWeaponManager : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (!Physics.Raycast(ray, out RaycastHit hit, 100f))
             return;
-
+        
         Vector3 targetPos = hit.point;
         float gravity = Mathf.Abs(Physics.gravity.y);
 

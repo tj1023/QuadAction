@@ -43,6 +43,9 @@ public class PlayerController : MonoBehaviour
     private bool _isAttacking;
     private bool _isDead;
     private float _verticalVelocity;
+
+    // 0 = 쿨타임 완료 (즉시 사용 가능), 1 = 방금 사용 (쿨타임 최대)
+    public float DodgeCooldownRatio => Mathf.Clamp01((_nextDodgeTime - Time.time) / dodgeCooldown);
     
     private void Awake()
     {
