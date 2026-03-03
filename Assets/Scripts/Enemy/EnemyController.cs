@@ -103,7 +103,7 @@ public class EnemyController : MonoBehaviour
         if (_currentState == State.Dash)
         {
             _agent.speed = data.dashSpeed;
-            _agent.acceleration = 500f; // 순간적으로 최고 속도에 도달하도록 가속도 대폭 증가
+            _agent.acceleration = 2000f; // 순간적으로 최고 속도에 도달하도록 가속도 대폭 증가
         }
 
         // Chase와 Dash 상태 모두 이동 애니메이션(뛰기)을 재생하도록 처리

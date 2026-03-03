@@ -21,4 +21,4 @@ MonoBehaviour:
   knockbackResistance: 0
   useDash: 1
   dashRange: 15
-  dashSpeed: 35
+  dashSpeed: 40
