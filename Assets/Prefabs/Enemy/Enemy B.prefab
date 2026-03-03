@@ -12,12 +12,12 @@ GameObject:
   - component: {fileID: 2141141523214570050}
   - component: {fileID: 1649380154159391779}
   - component: {fileID: 5135384916930072311}
-  - component: {fileID: 1610912574198967399}
   - component: {fileID: 7393687827476049525}
+  - component: {fileID: 1610912574198967399}
   - component: {fileID: 1594495925515401967}
   m_Layer: 0
   m_Name: Enemy B
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -109,19 +109,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &1610912574198967399
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4304951534380598487}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ed98ab7010aff648a725b9a271fef9f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyController
-  meleeHitbox: {fileID: 7254608838158577337}
 --- !u!114 &7393687827476049525
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -136,6 +123,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
   data: {fileID: 11400000, guid: 841a38868a7ecbf49806c63ac44b4bc1, type: 2}
   flashDuration: 0.15
+--- !u!114 &1610912574198967399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4304951534380598487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ed98ab7010aff648a725b9a271fef9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyController
+  meleeHitbox: {fileID: 7254608838158577337}
 --- !u!114 &1594495925515401967
 MonoBehaviour:
   m_ObjectHideFlags: 0

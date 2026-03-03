@@ -7,7 +7,13 @@ public class EnemyController : MonoBehaviour
 {
     private enum State { Idle, Chase, Attack, Dash }
     
+    [Header("Melee Setup")]
     [SerializeField] private EnemyMeleeHitbox meleeHitbox;
+    
+    [Header("Ranged Setup")]
+    [SerializeField] private GameObject missilePrefab;
+    [SerializeField] private Transform firePoint;
+    
     private NavMeshAgent _agent;
     private EnemyStats _stats;
     private EnemyAnimator _enemyAnimator;
@@ -138,7 +144,21 @@ public class EnemyController : MonoBehaviour
         if (meleeHitbox)
             meleeHitbox.Deactivate();
     }
+    
+    public void Fire()
+    {
+        if (!_stats.Data.isRanged || missilePrefab == null || firePoint == null || _player == null) return;
 
+        var missileObj = ObjectPool.Instance ? ObjectPool.Instance.Get(missilePrefab, firePoint.position, transform.rotation) : Instantiate(missilePrefab, firePoint.position, transform.rotation);
+        
+        Vector3 targetPos = _player.position;
+        targetPos.y = firePoint.position.y;
+        Vector3 dir = (targetPos - firePoint.position).normalized;
+
+        if (missileObj.TryGetComponent(out EnemyMissile enemyMissile))
+            enemyMissile.Initialize(_stats.Data.attackPower, _stats.Data.missileSpeed, _player, dir);
+    }
+    
     public void OnDeath(bool willRagdoll = false)
     {
         _agent.isStopped = true;

@@ -30,7 +30,7 @@ public class ObjectPool : MonoBehaviour
         }
 
         GameObject newObj = Instantiate(prefab, position, rotation);
-        newObj.GetOrAddPoolID().PrefabID = key;
+        newObj.GetOrAddPoolID().prefabID = key;
         return newObj;
     }
 
@@ -38,7 +38,7 @@ public class ObjectPool : MonoBehaviour
     {
         obj.SetActive(false);
 
-        int key = obj.GetOrAddPoolID().PrefabID;
+        int key = obj.GetOrAddPoolID().prefabID;
         if (!_pools.ContainsKey(key))
             _pools[key] = new Queue<GameObject>();
 
@@ -48,7 +48,7 @@ public class ObjectPool : MonoBehaviour
 
 public class PoolID : MonoBehaviour
 {
-    public int PrefabID;
+    public int prefabID;
 }
 
 public static class PoolExtensions

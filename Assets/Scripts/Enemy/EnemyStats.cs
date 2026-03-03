@@ -64,7 +64,7 @@ public class EnemyStats : MonoBehaviour, IDamageable
     {
         // 빨간색으로 변경
         foreach (var r in _renderers)
-            r.material.color = Color.red * 5;
+            r.material.color = Color.red;
 
         yield return new WaitForSeconds(flashDuration);
 

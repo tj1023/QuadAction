@@ -22,4 +22,8 @@ public class EnemyData : ScriptableObject
     public bool useDash;
     public float dashRange = 30f;
     public float dashSpeed = 30f;
+    
+    [Header("Ranged Attack")]
+    public bool isRanged;
+    public float missileSpeed = 15f;
 }

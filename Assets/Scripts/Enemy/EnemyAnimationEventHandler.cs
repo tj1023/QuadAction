@@ -18,4 +18,9 @@ public class EnemyAnimationEventHandler : MonoBehaviour
     {
         _controller?.DisableHitbox();
     }
+
+    public void OnFire()
+    {
+        _controller?.Fire();
+    }
 }
