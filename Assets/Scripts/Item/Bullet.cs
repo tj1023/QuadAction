@@ -9,10 +9,12 @@ public class Bullet : MonoBehaviour
     private float _knockbackForce;
     private Rigidbody _rb;
     private float _deactivateTime;
-
+    private TrailRenderer _trailRenderer;
+    
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
+        _trailRenderer = GetComponent<TrailRenderer>();
     }
 
     public void Initialize(int damage, float speed, Vector3 direction, float knockbackForce)
@@ -22,6 +24,7 @@ public class Bullet : MonoBehaviour
         _rb.useGravity = false;
         _rb.linearVelocity = direction.normalized * speed;
         _deactivateTime = Time.time + lifeTime;
+        _trailRenderer?.Clear();
     }
 
     private void Update()
