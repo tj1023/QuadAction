@@ -20,7 +20,12 @@ public class EnemyStats : MonoBehaviour, IDamageable
         _agent = GetComponent<NavMeshAgent>();
 
         if (data != null)
+        {
             _currentHp = data.maxHp;
+
+            if (data.isBoss)
+                EventManager.OnBossAppeared?.Invoke(data.maxHp);
+        }
 
         // 렌더러 + 원본 색상 캐싱
         _renderers = GetComponentsInChildren<Renderer>();
@@ -36,6 +41,9 @@ public class EnemyStats : MonoBehaviour, IDamageable
         _currentHp -= damage;
         _currentHp = Mathf.Max(_currentHp, 0);
 
+        if (data != null && data.isBoss)
+            EventManager.OnBossHpChanged?.Invoke(_currentHp, data.maxHp);
+
         if (_currentHp <= 0)
             Die();
     }
@@ -46,6 +54,9 @@ public class EnemyStats : MonoBehaviour, IDamageable
 
         _currentHp -= damage;
         _currentHp = Mathf.Max(_currentHp, 0);
+
+        if (data != null && data.isBoss)
+            EventManager.OnBossHpChanged?.Invoke(_currentHp, data.maxHp);
 
         if (_currentHp <= 0)
         {
@@ -108,6 +119,9 @@ public class EnemyStats : MonoBehaviour, IDamageable
     {
         IsDead = true;
         StopAllCoroutines();
+
+        if (data != null && data.isBoss)
+            EventManager.OnBossDied?.Invoke();
 
         foreach (var r in _renderers)
         {

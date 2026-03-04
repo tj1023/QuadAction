@@ -10,4 +10,9 @@ public static class EventManager
     public static Action<int> OnMoneyChanged;
     public static Action OnPlayerDeath;
     public static Action OnPlayerHit;
+
+    // Boss
+    public static Action<int> OnBossAppeared;              // (maxHp)
+    public static Action<int, int> OnBossHpChanged;        // (currentHp, maxHp)
+    public static Action OnBossDied;
 }
