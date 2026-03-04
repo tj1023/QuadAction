@@ -5021,6 +5021,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4e7d3004ff2ab946a408273083fb802, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMissile
+  defaultDamage: 10
+  defaultSpeed: 30
   lifeTime: 5
   isHoming: 0
   rotateSpeed: 5
