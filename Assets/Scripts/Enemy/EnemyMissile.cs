@@ -137,8 +137,8 @@ public class EnemyMissile : MonoBehaviour, IDamageable
     
     private void Explode()
     {
-        if (effectPrefab)
-            Instantiate(effectPrefab, transform.position, Quaternion.identity);
+        if (effectPrefab && ObjectPool.Instance)
+            ObjectPool.Instance.Get(effectPrefab, transform.position, Quaternion.identity);
         
         ReturnToPool();
     }
