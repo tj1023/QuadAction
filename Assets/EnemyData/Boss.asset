@@ -16,12 +16,12 @@ MonoBehaviour:
   attackPower: 20
   attackRate: 3
   moveSpeed: 10
-  chaseRange: 50
-  attackRange: 40
+  chaseRange: 75
+  attackRange: 50
   knockbackResistance: 10
   useDash: 0
   dashRange: 0
   dashSpeed: 0
   isRanged: 1
   isBoss: 1
-  meleeAttackRange: 20
+  meleeAttackRange: 25
