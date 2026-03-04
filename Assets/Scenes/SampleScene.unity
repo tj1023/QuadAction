@@ -238,15 +238,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f08cd0ef031e804497b4ab6a839c052, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  moveAction: {fileID: 1225081846}
-  dodgeAction: {fileID: 2052013658}
-  interactAction: {fileID: 1471823595}
-  swapAction: {fileID: 1588407241}
-  fireAction: {fileID: 1266472285}
-  reLoadAction: {fileID: 984965394}
-  equipSlot1Action: {fileID: 704349414}
-  equipSlot2Action: {fileID: 485578102}
-  equipSlot3Action: {fileID: 1762961679}
+  moveAction: {fileID: 1911888938}
+  dodgeAction: {fileID: 1390830669}
+  interactAction: {fileID: 1189487649}
+  swapAction: {fileID: 509324669}
+  fireAction: {fileID: 1004739177}
+  reLoadAction: {fileID: 695712876}
+  equipSlot1Action: {fileID: 228241400}
+  equipSlot2Action: {fileID: 498533701}
+  equipSlot3Action: {fileID: 1613649166}
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -552,6 +552,20 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b887435a901ce2046acf855a83196017, type: 3}
+--- !u!114 &228241400
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc1515ab76e54f068e2f2207940fab32, type: 3}
+  m_Name: Action map/EquipSlot1
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.InputActionReference
+  m_Asset: {fileID: -944628639613478452, guid: 2ddb10c82d14e0942b817db2ea553baf, type: 3}
+  m_ActionId: 0a105281-5e27-4aed-87e3-f6c5c6c69581
 --- !u!1 &397458892
 GameObject:
   m_ObjectHideFlags: 0
@@ -735,7 +749,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 179743227}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &485578102
+--- !u!114 &498533701
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -749,6 +763,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.InputActionReference
   m_Asset: {fileID: -944628639613478452, guid: 2ddb10c82d14e0942b817db2ea553baf, type: 3}
   m_ActionId: f5a7deaf-9dd9-4976-ade9-b656e4fadb61
+--- !u!114 &509324669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc1515ab76e54f068e2f2207940fab32, type: 3}
+  m_Name: Action map/Swap
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.InputActionReference
+  m_Asset: {fileID: -944628639613478452, guid: 2ddb10c82d14e0942b817db2ea553baf, type: 3}
+  m_ActionId: 4773f7c4-09f8-409a-8324-bd792adf9b83
 --- !u!4 &520319118 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 772968475147951224, guid: 66bacc6e3799ab74c80843dea7d39a5c, type: 3}
@@ -876,7 +904,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 550089172}
   m_CullTransparentMesh: 1
---- !u!114 &704349414
+--- !u!114 &695712876
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -886,10 +914,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fc1515ab76e54f068e2f2207940fab32, type: 3}
-  m_Name: Action map/EquipSlot1
+  m_Name: Action map/Reload
   m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.InputActionReference
   m_Asset: {fileID: -944628639613478452, guid: 2ddb10c82d14e0942b817db2ea553baf, type: 3}
-  m_ActionId: 0a105281-5e27-4aed-87e3-f6c5c6c69581
+  m_ActionId: 78521a95-470d-463b-8064-31b85021b6f3
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -1778,7 +1806,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5657882665412638405, guid: eea71867d65907045a92d15670981d45, type: 3}
   m_PrefabInstance: {fileID: 938562610}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &984965394
+--- !u!114 &1004739177
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1788,10 +1816,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fc1515ab76e54f068e2f2207940fab32, type: 3}
-  m_Name: Action map/Reload
+  m_Name: Action map/Fire
   m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.InputActionReference
   m_Asset: {fileID: -944628639613478452, guid: 2ddb10c82d14e0942b817db2ea553baf, type: 3}
-  m_ActionId: 78521a95-470d-463b-8064-31b85021b6f3
+  m_ActionId: c0be8aa1-8d45-45b6-9e21-3464c93326cb
 --- !u!1 &1036414009
 GameObject:
   m_ObjectHideFlags: 0
@@ -2446,7 +2474,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5903297864969995812, guid: 8f5e135a19626f544908fc8f156144b9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 12.55
+      value: 2.81
       objectReference: {fileID: 0}
     - target: {fileID: 5903297864969995812, guid: 8f5e135a19626f544908fc8f156144b9, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2454,7 +2482,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5903297864969995812, guid: 8f5e135a19626f544908fc8f156144b9, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 10.97
+      value: 4.69
       objectReference: {fileID: 0}
     - target: {fileID: 5903297864969995812, guid: 8f5e135a19626f544908fc8f156144b9, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2561,7 +2589,7 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 522048965}
   m_SourcePrefab: {fileID: 100100000, guid: 8f5e135a19626f544908fc8f156144b9, type: 3}
---- !u!114 &1225081846
+--- !u!114 &1189487649
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2571,10 +2599,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fc1515ab76e54f068e2f2207940fab32, type: 3}
-  m_Name: Action map/Move
+  m_Name: Action map/Interact
   m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.InputActionReference
   m_Asset: {fileID: -944628639613478452, guid: 2ddb10c82d14e0942b817db2ea553baf, type: 3}
-  m_ActionId: c0a9c6f5-56b4-4748-8306-45b4654e9b3f
+  m_ActionId: 0b06ff54-8167-4ca3-a50a-c507ba69fc16
 --- !u!1 &1250073468
 GameObject:
   m_ObjectHideFlags: 0
@@ -2650,20 +2678,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1250073468}
   m_CullTransparentMesh: 1
---- !u!114 &1266472285
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc1515ab76e54f068e2f2207940fab32, type: 3}
-  m_Name: Action map/Fire
-  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.InputActionReference
-  m_Asset: {fileID: -944628639613478452, guid: 2ddb10c82d14e0942b817db2ea553baf, type: 3}
-  m_ActionId: c0be8aa1-8d45-45b6-9e21-3464c93326cb
 --- !u!1 &1294480227
 GameObject:
   m_ObjectHideFlags: 0
@@ -3172,6 +3186,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1368446041}
   m_CullTransparentMesh: 1
+--- !u!114 &1390830669
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc1515ab76e54f068e2f2207940fab32, type: 3}
+  m_Name: Action map/Dodge
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.InputActionReference
+  m_Asset: {fileID: -944628639613478452, guid: 2ddb10c82d14e0942b817db2ea553baf, type: 3}
+  m_ActionId: 3c2cf3ab-d225-4259-ada7-ce01c927be97
 --- !u!1 &1402431290
 GameObject:
   m_ObjectHideFlags: 0
@@ -3487,20 +3515,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3db1a917c9adedf47a6fbe9a56d02151, type: 3}
---- !u!114 &1471823595
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc1515ab76e54f068e2f2207940fab32, type: 3}
-  m_Name: Action map/Interact
-  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.InputActionReference
-  m_Asset: {fileID: -944628639613478452, guid: 2ddb10c82d14e0942b817db2ea553baf, type: 3}
-  m_ActionId: 0b06ff54-8167-4ca3-a50a-c507ba69fc16
 --- !u!1 &1481410214
 GameObject:
   m_ObjectHideFlags: 0
@@ -3714,7 +3728,7 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7d1607bc6e058c64b9ed4dfb1301a02b, type: 3}
---- !u!114 &1588407241
+--- !u!114 &1613649166
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3724,10 +3738,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fc1515ab76e54f068e2f2207940fab32, type: 3}
-  m_Name: Action map/Swap
+  m_Name: Action map/EquipSlot3
   m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.InputActionReference
   m_Asset: {fileID: -944628639613478452, guid: 2ddb10c82d14e0942b817db2ea553baf, type: 3}
-  m_ActionId: 4773f7c4-09f8-409a-8324-bd792adf9b83
+  m_ActionId: 7ffafa47-0f18-4784-a61f-4ceb4919d554
 --- !u!1 &1624807837
 GameObject:
   m_ObjectHideFlags: 0
@@ -3954,20 +3968,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UIHp
   fillImage: {fileID: 1250073470}
   hpText: {fileID: 1070118648}
---- !u!114 &1762961679
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc1515ab76e54f068e2f2207940fab32, type: 3}
-  m_Name: Action map/EquipSlot3
-  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.InputActionReference
-  m_Asset: {fileID: -944628639613478452, guid: 2ddb10c82d14e0942b817db2ea553baf, type: 3}
-  m_ActionId: 7ffafa47-0f18-4784-a61f-4ceb4919d554
 --- !u!1 &1785582184
 GameObject:
   m_ObjectHideFlags: 0
@@ -4171,6 +4171,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f461917eb90973d4c82d25c7df0b608d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectPool
+--- !u!114 &1911888938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc1515ab76e54f068e2f2207940fab32, type: 3}
+  m_Name: Action map/Move
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.InputActionReference
+  m_Asset: {fileID: -944628639613478452, guid: 2ddb10c82d14e0942b817db2ea553baf, type: 3}
+  m_ActionId: c0a9c6f5-56b4-4748-8306-45b4654e9b3f
 --- !u!4 &1913409080 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4867992842686710733, guid: 3db1a917c9adedf47a6fbe9a56d02151, type: 3}
@@ -4326,7 +4340,6 @@ Transform:
   - {fileID: 529202411}
   - {fileID: 1706142205}
   - {fileID: 1353930076}
-  - {fileID: 2062362019549926073}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1958244055
@@ -4536,20 +4549,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7d1607bc6e058c64b9ed4dfb1301a02b, type: 3}
---- !u!114 &2052013658
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc1515ab76e54f068e2f2207940fab32, type: 3}
-  m_Name: Action map/Dodge
-  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.InputActionReference
-  m_Asset: {fileID: -944628639613478452, guid: 2ddb10c82d14e0942b817db2ea553baf, type: 3}
-  m_ActionId: 3c2cf3ab-d225-4259-ada7-ce01c927be97
 --- !u!1001 &2075761199
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4682,68 +4681,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2092039058}
   m_CullTransparentMesh: 1
---- !u!4 &2062362019549926073 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7329183630017561087, guid: 673391ffcfbf8c741b57023ae4bb2c02, type: 3}
-  m_PrefabInstance: {fileID: 7285736659939583250}
-  m_PrefabAsset: {fileID: 0}
---- !u!1001 &7285736659939583250
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 1953691779}
-    m_Modifications:
-    - target: {fileID: 7329183630017561087, guid: 673391ffcfbf8c741b57023ae4bb2c02, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 19.328789
-      objectReference: {fileID: 0}
-    - target: {fileID: 7329183630017561087, guid: 673391ffcfbf8c741b57023ae4bb2c02, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7329183630017561087, guid: 673391ffcfbf8c741b57023ae4bb2c02, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0.27970982
-      objectReference: {fileID: 0}
-    - target: {fileID: 7329183630017561087, guid: 673391ffcfbf8c741b57023ae4bb2c02, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7329183630017561087, guid: 673391ffcfbf8c741b57023ae4bb2c02, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7329183630017561087, guid: 673391ffcfbf8c741b57023ae4bb2c02, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7329183630017561087, guid: 673391ffcfbf8c741b57023ae4bb2c02, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7329183630017561087, guid: 673391ffcfbf8c741b57023ae4bb2c02, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7329183630017561087, guid: 673391ffcfbf8c741b57023ae4bb2c02, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7329183630017561087, guid: 673391ffcfbf8c741b57023ae4bb2c02, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7412345771149322367, guid: 673391ffcfbf8c741b57023ae4bb2c02, type: 3}
-      propertyPath: m_Name
-      value: Enemy C
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 673391ffcfbf8c741b57023ae4bb2c02, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

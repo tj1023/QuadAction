@@ -10,24 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5a6292a05d2364c4cbb9394b9f4d45f6, type: 3}
-  m_Name: Enemy C
+  m_Name: Boss
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
-  maxHp: 100
+  maxHp: 200
   attackPower: 20
   attackRate: 3
   moveSpeed: 10
-  chaseRange: 30
-  attackRange: 20
-  knockbackResistance: 0
+  chaseRange: 50
+  attackRange: 40
+  knockbackResistance: 10
   useDash: 0
   dashRange: 0
   dashSpeed: 0
   isRanged: 1
-  missileSpeed: 15
-  isBoss: 0
-  meleeAttackRange: 4
-  missileDamage: 10
-  rockDamage: 20
-  jumpDamage: 30
-  rockSpeed: 8
-  rockMaxScale: 3
+  isBoss: 1
+  meleeAttackRange: 20

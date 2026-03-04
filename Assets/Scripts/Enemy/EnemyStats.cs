@@ -117,5 +117,7 @@ public class EnemyStats : MonoBehaviour, IDamageable
 
         if (TryGetComponent(out EnemyController controller))
             controller.OnDeath(willRagdoll);
+        else if (TryGetComponent(out BossController bossController))
+            bossController.OnDeath(willRagdoll);
     }
 }

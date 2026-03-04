@@ -35,7 +35,7 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player")) return;
+        if (other.CompareTag("Player") || other.CompareTag("Hitbox")) return;
 
         Vector3 hitDirection = _rb.linearVelocity.normalized;
 

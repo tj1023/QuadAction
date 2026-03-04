@@ -7,6 +7,8 @@ public class EnemyMissile : MonoBehaviour, IDamageable
     private static readonly int HashColor = Shader.PropertyToID("_Color");
 
     [Header("Missile Settings")]
+    [SerializeField] private int defaultDamage = 10;
+    [SerializeField] private float defaultSpeed = 15f;
     [SerializeField] private float lifeTime = 5f;
     [SerializeField] private bool isHoming;
     [SerializeField] private float rotateSpeed = 5f;
@@ -17,6 +19,11 @@ public class EnemyMissile : MonoBehaviour, IDamageable
     [SerializeField] private float flashDuration = 0.1f;
     [SerializeField] private Color flashColor = Color.red;
     [SerializeField] private MeshRenderer mainRenderer;
+
+    [Header("Visual Spin")]
+    [SerializeField] private Transform meshTransform;
+    [SerializeField] private Vector3 spinAxis = Vector3.right;
+    [SerializeField] private float spinSpeed;
     
     private int _damage;
     private float _speed;
@@ -52,6 +59,11 @@ public class EnemyMissile : MonoBehaviour, IDamageable
         
         ResetColor();
     }
+    
+    public void Initialize(Transform target, Vector3 initialDirection)
+    {
+        Initialize(defaultDamage, defaultSpeed, target, initialDirection);
+    }
 
     private void FixedUpdate()
     {
@@ -76,9 +88,15 @@ public class EnemyMissile : MonoBehaviour, IDamageable
         }
     }
 
+    private void Update()
+    {
+        if (meshTransform && spinSpeed != 0f)
+            meshTransform.Rotate(spinAxis * (spinSpeed * Time.deltaTime), Space.Self);
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Enemy") || other.CompareTag("Weapon")) return; 
+        if (!other.CompareTag("Player")) return; 
         
         if (other.TryGetComponent(out IDamageable target))
             target.TakeDamage(_damage);

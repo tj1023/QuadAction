@@ -156,7 +156,7 @@ public class EnemyController : MonoBehaviour
         Vector3 dir = (targetPos - firePoint.position).normalized;
 
         if (missileObj.TryGetComponent(out EnemyMissile enemyMissile))
-            enemyMissile.Initialize(_stats.Data.attackPower, _stats.Data.missileSpeed, _player, dir);
+            enemyMissile.Initialize(_player, dir);
     }
     
     public void OnDeath(bool willRagdoll = false)

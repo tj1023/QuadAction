@@ -136,6 +136,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
   meleeHitbox: {fileID: 4192624375740712573}
+  missilePrefab: {fileID: 0}
+  firePoint: {fileID: 0}
 --- !u!114 &6245065481325080619
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -161,7 +163,7 @@ GameObject:
   - component: {fileID: 4192624375740712573}
   m_Layer: 0
   m_Name: Melee Hitbox
-  m_TagString: Untagged
+  m_TagString: Hitbox
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

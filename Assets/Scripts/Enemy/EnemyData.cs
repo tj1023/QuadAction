@@ -25,5 +25,8 @@ public class EnemyData : ScriptableObject
     
     [Header("Ranged Attack")]
     public bool isRanged;
-    public float missileSpeed = 15f;
+
+    [Header("Boss Settings")]
+    public bool isBoss;
+    public float meleeAttackRange = 4f;
 }
