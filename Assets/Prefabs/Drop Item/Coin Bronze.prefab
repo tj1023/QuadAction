@@ -68,7 +68,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Item
   type: 1
-  value: 5
+  value: 50
 --- !u!1 &4638321453646086770
 GameObject:
   m_ObjectHideFlags: 0

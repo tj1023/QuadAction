@@ -43,9 +43,12 @@ public class PlayerController : MonoBehaviour
     private bool _isAttacking;
     private bool _isDead;
     private float _verticalVelocity;
+    private bool _inputEnabled = true;
 
     // 0 = 쿨타임 완료 (즉시 사용 가능), 1 = 방금 사용 (쿨타임 최대)
     public float DodgeCooldownRatio => Mathf.Clamp01((_nextDodgeTime - Time.time) / dodgeCooldown);
+
+    public void SetInputEnabled(bool inputEnabled) => _inputEnabled = inputEnabled;
     
     private void Awake()
     {
@@ -129,6 +132,12 @@ public class PlayerController : MonoBehaviour
             _verticalVelocity += gravity * Time.deltaTime;
 
         if (_isDead)
+        {
+            _controller.Move(new Vector3(0f, _verticalVelocity * Time.deltaTime, 0f));
+            return;
+        }
+
+        if (!_inputEnabled)
         {
             _controller.Move(new Vector3(0f, _verticalVelocity * Time.deltaTime, 0f));
             return;
