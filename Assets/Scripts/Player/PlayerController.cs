@@ -318,7 +318,7 @@ public class PlayerController : MonoBehaviour
 
     private void EquipSlot(int index)
     {
-        if (_isDodging || _weaponManager == null) return;
+        if (!_inputEnabled || _isDodging || _weaponManager == null) return;
         CancelAttack();
         _weaponManager.EquipWeaponByIndex(index);
     }
