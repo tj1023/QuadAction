@@ -168,6 +168,8 @@ public class EnemyController : MonoBehaviour
         _currentState = State.Idle;
         _enemyAnimator?.SetMoving(false);
 
+        DisableHitbox();
+        
         if (!willRagdoll)
         {
             _enemyAnimator?.TriggerDeath();

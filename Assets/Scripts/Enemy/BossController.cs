@@ -196,6 +196,7 @@ public class BossController : MonoBehaviour
         _isAttacking = false;
 
         StopAllCoroutines();
+        DisableMeleeHitbox();
 
         if (!willRagdoll)
         {

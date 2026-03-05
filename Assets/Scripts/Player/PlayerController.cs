@@ -347,6 +347,7 @@ public class PlayerController : MonoBehaviour
         _isDead = true;
         _isAttacking = false;
         _isDodging = false;
+        _inputEnabled = false;
         _animator?.SetMoving(false);
     }
 }
