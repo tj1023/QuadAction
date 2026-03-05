@@ -9,8 +9,8 @@ public class StageManager : MonoBehaviour
     [Header("Enemy Spawning")]
     [SerializeField] private GameObject[] enemyPrefabs;
     [SerializeField] private Transform[] spawnPoints;
-    [SerializeField] private int baseEnemyCount = 3;
-    [SerializeField] private int enemiesPerStage = 2;
+    [SerializeField] private int baseDifficulty = 5;
+    [SerializeField] private int difficultyPerStage = 3;
 
     [Header("Stage Objects")]
     [SerializeField] private NextStageBeacon nextStageBeacon;
@@ -90,25 +90,62 @@ public class StageManager : MonoBehaviour
         if (enemyPrefabs == null || enemyPrefabs.Length == 0) return;
         if (spawnPoints == null || spawnPoints.Length == 0) return;
 
-        // 스테이지 번호에 비례하여 적 수 증가
-        // StageNumber는 1부터 시작 (첫 전투 스테이지)
-        int combatRound = (StageNumber + 1) / 2; // 1, 2, 3, ...
-        int enemyCount = baseEnemyCount + (combatRound - 1) * enemiesPerStage;
-        _remainingEnemies = enemyCount;
+        int combatRound = (StageNumber + 1) / 2;
+        int budget = baseDifficulty + (combatRound - 1) * difficultyPerStage;
 
-        for (int i = 0; i < enemyCount; i++)
+        // 각 프리팹의 difficulty 캐싱
+        int[] difficulties = new int[enemyPrefabs.Length];
+        int minDifficulty = int.MaxValue;
+        for (int i = 0; i < enemyPrefabs.Length; i++)
         {
-            // 스폰 포인트 순환
-            Transform point = spawnPoints[i % spawnPoints.Length];
+            var stats = enemyPrefabs[i].GetComponent<EnemyStats>();
+            difficulties[i] = (stats != null && stats.Data != null) ? stats.Data.difficulty : 1;
+            if (difficulties[i] < minDifficulty)
+                minDifficulty = difficulties[i];
+        }
 
-            // 스폰 포인트 주변 랜덤 위치
+        _remainingEnemies = 0;
+        int spawnIndex = 0;
+
+        while (budget >= minDifficulty)
+        {
+            // 예산 이하인 적만 후보로 필터링
+            int chosen = -1;
+            int attempts = 0;
+            while (attempts < 20)
+            {
+                int idx = Random.Range(0, enemyPrefabs.Length);
+                if (difficulties[idx] <= budget)
+                {
+                    chosen = idx;
+                    break;
+                }
+                attempts++;
+            }
+
+            // 랜덤 실패 시 순차 탐색
+            if (chosen == -1)
+            {
+                for (int i = 0; i < enemyPrefabs.Length; i++)
+                {
+                    if (difficulties[i] <= budget)
+                    {
+                        chosen = i;
+                        break;
+                    }
+                }
+            }
+
+            if (chosen == -1) break;
+
+            budget -= difficulties[chosen];
+
+            Transform point = spawnPoints[spawnIndex % spawnPoints.Length];
             Vector3 offset = new Vector3(Random.Range(-2f, 2f), 0f, Random.Range(-2f, 2f));
-            Vector3 spawnPos = point.position + offset;
+            Instantiate(enemyPrefabs[chosen], point.position + offset, Quaternion.identity);
 
-            // 적 프리팹 랜덤 선택
-            GameObject prefab = enemyPrefabs[Random.Range(0, enemyPrefabs.Length)];
-
-            Instantiate(prefab, spawnPos, Quaternion.identity);
+            _remainingEnemies++;
+            spawnIndex++;
         }
     }
 

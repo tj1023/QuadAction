@@ -125,6 +125,8 @@ public class EnemyStats : MonoBehaviour, IDamageable
         if (data != null && data.isBoss)
             EventManager.OnBossDied?.Invoke();
 
+        DropCoin();
+
         foreach (var r in _renderers)
         {
             if (r != null)
@@ -136,4 +138,22 @@ public class EnemyStats : MonoBehaviour, IDamageable
         else if (TryGetComponent(out BossController bossController))
             bossController.OnDeath(willRagdoll);
     }
+
+    private void DropCoin()
+    {
+        if (data == null || data.coinPrefab == null) return;
+
+        Vector3 dropPos = transform.position + Vector3.up * 1.5f;
+        
+        Instantiate(data.coinPrefab, dropPos, Quaternion.identity);
+
+        // 난이도 × bonusCoinChance 확률로 추가 코인 드롭
+        float bonusRoll = Random.Range(0f, 1f);
+        if (bonusRoll < data.difficulty * data.bonusCoinChance)
+        {
+            Vector3 offset = new Vector3(Random.Range(-0.5f, 0.5f), 0f, Random.Range(-0.5f, 0.5f));
+            Instantiate(data.coinPrefab, dropPos + offset, Quaternion.identity);
+        }
+    }
 }
+

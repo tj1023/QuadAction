@@ -12,22 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a6292a05d2364c4cbb9394b9f4d45f6, type: 3}
   m_Name: Enemy C
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  difficulty: 4
   maxHp: 100
   attackPower: 20
   attackRate: 3
   moveSpeed: 10
   chaseRange: 30
   attackRange: 20
-  knockbackResistance: 0
+  knockbackResistance: 1
   useDash: 0
   dashRange: 0
   dashSpeed: 0
   isRanged: 1
-  missileSpeed: 15
   isBoss: 0
   meleeAttackRange: 4
-  missileDamage: 10
-  rockDamage: 20
-  jumpDamage: 30
-  rockSpeed: 8
-  rockMaxScale: 3
+  coinPrefab: {fileID: 2067688833408640663, guid: 3ab03013743c84d40b0907378f0a5076, type: 3}
+  bonusCoinChance: 0.1

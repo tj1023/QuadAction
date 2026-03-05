@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a6292a05d2364c4cbb9394b9f4d45f6, type: 3}
   m_Name: Enemy A
   m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  difficulty: 1
   maxHp: 50
   attackPower: 5
   attackRate: 1.5
@@ -22,3 +23,8 @@ MonoBehaviour:
   useDash: 0
   dashRange: 0
   dashSpeed: 0
+  isRanged: 0
+  isBoss: 0
+  meleeAttackRange: 4
+  coinPrefab: {fileID: 4496288406305556483, guid: f7be7581da9ea144698263679800a699, type: 3}
+  bonusCoinChance: 0.2
