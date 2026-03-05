@@ -32,20 +32,49 @@ public class EnemyController : MonoBehaviour
         _originalAcceleration = _agent.acceleration;
     }
 
-    private void Start()
+    private void OnEnable()
     {
+        _currentState = State.Idle;
+        _lastAttackTime = 0f;
+        _attackLockUntil = 0f;
+        
+        DisableHitbox();
+
         // 씬에서 플레이어 자동 탐색
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
             _player = playerObj.transform;
 
-        if (_stats.Data != null)
+        if (_stats != null && _stats.Data != null && _agent != null)
         {
             _agent.speed = _stats.Data.moveSpeed;
-
+            _agent.acceleration = _originalAcceleration;
+            _agent.enabled = true;
+            _agent.isStopped = false;
+            
             // 적끼리 겹치지 않도록 회피 설정
             _agent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
             _agent.avoidancePriority = Random.Range(30, 70);
+        }
+
+        if (TryGetComponent(out Collider col))
+        {
+            col.enabled = true;
+            col.isTrigger = false;
+        }
+
+        if (TryGetComponent(out Rigidbody rb))
+        {
+            rb.isKinematic = true;
+            rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
+        }
+        
+        Animator anim = GetComponentInChildren<Animator>();
+        if (anim)
+        {
+            anim.enabled = true;
+            anim.Rebind();
+            anim.Update(0f);
         }
     }
 
@@ -178,7 +207,16 @@ public class EnemyController : MonoBehaviour
                 col.enabled = false;
         }
 
-        Destroy(gameObject, willRagdoll ? 5f : 2f);
+        StartCoroutine(ReleaseRoutine(willRagdoll ? 5f : 2f));
+    }
+
+    private System.Collections.IEnumerator ReleaseRoutine(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (ObjectPool.Instance)
+            ObjectPool.Instance.Release(gameObject);
+        else
+            Destroy(gameObject);
     }
 
     public void LaunchRagdoll(Vector3 explosionPos, float force)
@@ -190,8 +228,9 @@ public class EnemyController : MonoBehaviour
         }
         _agent.enabled = false;
 
-        // 진행 중인 넉백 코루틴 중단
         StopAllCoroutines();
+        if (_stats != null && _stats.IsDead)
+            StartCoroutine(ReleaseRoutine(5f));
 
         Animator anim = GetComponentInChildren<Animator>();
         if (anim) anim.enabled = false;

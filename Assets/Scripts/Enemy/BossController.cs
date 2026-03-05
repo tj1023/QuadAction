@@ -36,16 +36,45 @@ public class BossController : MonoBehaviour
         _bossAnimator = GetComponent<BossAnimator>();
     }
 
-    private void Start()
+    private void OnEnable()
     {
+        _currentState = State.Idle;
+        _lastAttackTime = 0f;
+        _isAttacking = false;
+
+        DisableMeleeHitbox();
+
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
             _player = playerObj.transform;
 
-        if (_stats.Data != null)
+        if (_stats != null && _stats.Data != null && _agent != null)
         {
             _agent.speed = _stats.Data.moveSpeed;
+            _agent.enabled = true;
+            _agent.isStopped = false;
+            _agent.updateRotation = true;
             _agent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
+        }
+
+        if (TryGetComponent(out Collider col))
+        {
+            col.enabled = true;
+            col.isTrigger = false;
+        }
+
+        if (TryGetComponent(out Rigidbody rb))
+        {
+            rb.isKinematic = true;
+            rb.collisionDetectionMode = CollisionDetectionMode.Discrete;
+        }
+
+        Animator anim = GetComponentInChildren<Animator>();
+        if (anim)
+        {
+            anim.enabled = true;
+            anim.Rebind();
+            anim.Update(0f);
         }
     }
 
@@ -206,6 +235,15 @@ public class BossController : MonoBehaviour
                 col.enabled = false;
         }
 
-        Destroy(gameObject, willRagdoll ? 5f : 3f);
+        StartCoroutine(ReleaseRoutine(willRagdoll ? 5f : 3f));
+    }
+
+    private System.Collections.IEnumerator ReleaseRoutine(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (ObjectPool.Instance)
+            ObjectPool.Instance.Release(gameObject);
+        else
+            Destroy(gameObject);
     }
 }

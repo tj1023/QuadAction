@@ -142,7 +142,11 @@ public class StageManager : MonoBehaviour
 
             Transform point = spawnPoints[spawnIndex % spawnPoints.Length];
             Vector3 offset = new Vector3(Random.Range(-2f, 2f), 0f, Random.Range(-2f, 2f));
-            Instantiate(enemyPrefabs[chosen], point.position + offset, Quaternion.identity);
+            
+            if (ObjectPool.Instance)
+                ObjectPool.Instance.Get(enemyPrefabs[chosen], point.position + offset, Quaternion.identity);
+            else
+                Instantiate(enemyPrefabs[chosen], point.position + offset, Quaternion.identity);
 
             _remainingEnemies++;
             spawnIndex++;

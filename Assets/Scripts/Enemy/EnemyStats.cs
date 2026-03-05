@@ -19,6 +19,18 @@ public class EnemyStats : MonoBehaviour, IDamageable
     {
         _agent = GetComponent<NavMeshAgent>();
 
+        // 렌더러 + 원본 색상 캐싱
+        _renderers = GetComponentsInChildren<Renderer>();
+        _originalColors = new Color[_renderers.Length];
+        for (int i = 0; i < _renderers.Length; i++)
+            _originalColors[i] = _renderers[i].material.color;
+    }
+
+    private void OnEnable()
+    {
+        IsDead = false;
+        StopAllCoroutines();
+
         if (data != null)
         {
             _currentHp = data.maxHp;
@@ -27,11 +39,15 @@ public class EnemyStats : MonoBehaviour, IDamageable
                 EventManager.OnBossAppeared?.Invoke(data.maxHp);
         }
 
-        // 렌더러 + 원본 색상 캐싱
-        _renderers = GetComponentsInChildren<Renderer>();
-        _originalColors = new Color[_renderers.Length];
-        for (int i = 0; i < _renderers.Length; i++)
-            _originalColors[i] = _renderers[i].material.color;
+        // 원본 색상 복원 (풀에서 재사용될 때를 대비)
+        if (_renderers != null && _originalColors != null)
+        {
+            for (int i = 0; i < _renderers.Length; i++)
+            {
+                if (_renderers[i] != null)
+                    _renderers[i].material.color = _originalColors[i];
+            }
+        }
     }
 
     public void TakeDamage(int damage)
