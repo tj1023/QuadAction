@@ -340,6 +340,7 @@ public class PlayerController : MonoBehaviour
     private void CancelAttack()
     {
         _isAttacking = false;
+        _weaponManager.DisableMeleeHitbox(); 
     }
 
     private void OnDeath()
