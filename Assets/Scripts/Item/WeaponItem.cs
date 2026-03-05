@@ -3,6 +3,7 @@ using UnityEngine;
 public class WeaponItem : MonoBehaviour, IInteractable
 {
     [SerializeField] private WeaponData weaponData;
+    public WeaponData Data => weaponData;
 
     private void Update()
     {

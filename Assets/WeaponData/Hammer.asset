@@ -19,6 +19,10 @@ MonoBehaviour:
   attackRate: 0.7
   maxAmmo: 0
   knockbackForce: 3
+  currentUpgradeLevel: 0
+  baseUpgradePrice: 1000
+  priceIncreasePerLevel: 50
+  damageIncreasePerLevel: 7
   bulletPrefab: {fileID: 0}
   bulletSpeed: 30
   grenadePrefab: {fileID: 0}

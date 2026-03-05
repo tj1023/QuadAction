@@ -17,6 +17,27 @@ public class WeaponData : ScriptableObject
     public int maxAmmo;
     public float knockbackForce = 5f;
 
+    [Header("Upgrade System")]
+    public int currentUpgradeLevel = 0;
+    public int baseUpgradePrice = 100;
+    public int priceIncreasePerLevel = 50;
+    public int damageIncreasePerLevel = 5;
+
+    public int GetCurrentDamage()
+    {
+        return attackPower + (currentUpgradeLevel * damageIncreasePerLevel);
+    }
+
+    public int GetCurrentUpgradePrice()
+    {
+        return baseUpgradePrice + (currentUpgradeLevel * priceIncreasePerLevel);
+    }
+
+    public void ResetUpgrade()
+    {
+        currentUpgradeLevel = 0;
+    }
+
     [Header("Projectile (Ranged Only)")]
     public GameObject bulletPrefab;
     public float bulletSpeed = 30f;

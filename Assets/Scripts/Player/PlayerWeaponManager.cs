@@ -213,7 +213,7 @@ public class PlayerWeaponManager : MonoBehaviour
         GameObject bulletObj = ObjectPool.Instance.Get(data.bulletPrefab, firePoint.position, Quaternion.LookRotation(direction));
         if (bulletObj.TryGetComponent(out Bullet bullet))
         {
-            bullet.Initialize(data.attackPower, data.bulletSpeed, direction, data.knockbackForce);
+            bullet.Initialize(data.GetCurrentDamage(), data.bulletSpeed, direction, data.knockbackForce);
         }
     }
 
@@ -257,7 +257,7 @@ public class PlayerWeaponManager : MonoBehaviour
         GameObject grenadeObj = Instantiate(data.grenadePrefab, spawnPos, Quaternion.identity);
         if (grenadeObj.TryGetComponent(out ThrownGrenade grenade))
         {
-            grenade.Initialize(data.attackPower, data.knockbackForce, data.explosionRadius, velocity);
+            grenade.Initialize(data.GetCurrentDamage(), data.knockbackForce, data.explosionRadius, velocity);
         }
 
         // 투척 무기는 1회성 — 슬롯에서 제거

@@ -8,6 +8,9 @@ public class UIGameStart : MonoBehaviour
     [SerializeField] private GameObject hud;
     [SerializeField] private GameObject stageObject;
 
+    [Header("Weapon Data Reset")]
+    [SerializeField] private WeaponData[] resetTargetWeapons;
+
     private void Start()
     {
         Time.timeScale = 0f;
@@ -23,6 +26,15 @@ public class UIGameStart : MonoBehaviour
         hud?.SetActive(true);
         stageObject?.SetActive(true);
         gameObject.SetActive(false);
+
+        if (resetTargetWeapons != null)
+        {
+            foreach (var weapon in resetTargetWeapons)
+            {
+                if (weapon != null)
+                    weapon.ResetUpgrade();
+            }
+        }
     }
 
     private void OnQuitClicked()

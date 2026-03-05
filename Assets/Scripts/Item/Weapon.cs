@@ -42,7 +42,7 @@ public class Weapon : MonoBehaviour
     public void EnableHitbox()
     {
         if (meleeHitbox != null)
-            meleeHitbox.Activate(Data.attackPower, Data.knockbackForce);
+            meleeHitbox.Activate(Data.GetCurrentDamage(), Data.knockbackForce);
     }
 
     public void DisableHitbox()

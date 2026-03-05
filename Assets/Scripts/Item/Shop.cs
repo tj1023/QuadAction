@@ -1,10 +1,13 @@
 using UnityEngine;
 using System.Collections;
 
+public enum ShopType { Item, WeaponUpgrade }
+
 public class Shop : MonoBehaviour, IInteractable
 {
     [SerializeField] private UIShop uiShop;
     [SerializeField] private Transform spawnPoint;
+    [SerializeField] private ShopType shopType;
 
     [Header("Dialogue")]
     [SerializeField] private string defaultDialogue;
@@ -29,7 +32,7 @@ public class Shop : MonoBehaviour, IInteractable
 
     public void Interact(GameObject interactor)
     {
-        uiShop.Open(interactor, spawnPoint, defaultDialogue, purchaseDialogue, failDialogue);
+        uiShop.Open(interactor, spawnPoint, shopType, defaultDialogue, purchaseDialogue, failDialogue);
 
         // PickupClosestItem이 Interact 후 Remove하므로 1프레임 뒤에 다시 추가
         if (interactor.TryGetComponent(out PlayerInteraction player))

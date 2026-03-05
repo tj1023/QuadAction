@@ -22,6 +22,7 @@ public class UIShop : MonoBehaviour
 
     private GameObject _player;
     private Transform _spawnPoint;
+    private ShopType _shopType;
     private string _defaultDialogue;
     private string _purchaseDialogue;
     private string _failDialogue;
@@ -47,16 +48,19 @@ public class UIShop : MonoBehaviour
         }
     }
 
-    public void Open(GameObject player, Transform spawnPoint,
+    public void Open(GameObject player, Transform spawnPoint, ShopType shopType,
         string defaultDialogue, string purchaseDialogue, string failDialogue)
     {
         _player = player;
         _spawnPoint = spawnPoint;
+        _shopType = shopType;
         _defaultDialogue = defaultDialogue;
         _purchaseDialogue = purchaseDialogue;
         _failDialogue = failDialogue;
         panel.SetActive(true);
         dialogueText.text = _defaultDialogue;
+        
+        UpdatePriceTexts();
 
         // 상점 열린 동안 플레이어 입력 비활성화
         if (_player.TryGetComponent(out PlayerController controller))
@@ -72,9 +76,26 @@ public class UIShop : MonoBehaviour
             controller.SetInputEnabled(true);
     }
 
+    private void UpdatePriceTexts()
+    {
+        if (_shopType == ShopType.WeaponUpgrade && itemPrefabs != null)
+        {
+            for (int i = 0; i < itemButtons.Length; i++)
+            {
+                if (i < itemPrefabs.Length && itemPrefabs[i] != null && i < moneyTexts.Length)
+                {
+                    if (itemPrefabs[i].TryGetComponent(out WeaponItem weaponItem))
+                    {
+                        moneyTexts[i].text = $"${weaponItem.Data.GetCurrentUpgradePrice()}";
+                    }
+                }
+            }
+        }
+    }
+
     private void OnPurchase(int index)
     {
-        if (_player == null || index >= itemPrefabs.Length || index >= moneyTexts.Length) return;
+        if (_player == null || index >= moneyTexts.Length) return;
 
         // MoneyTxt에서 가격 파싱
         if (!int.TryParse(moneyTexts[index].text.Replace("$", "").Replace(",", "").Trim(), out int price)) return;
@@ -85,7 +106,19 @@ public class UIShop : MonoBehaviour
             if (stats.SpendMoney(price))
             {
                 dialogueText.text = _purchaseDialogue;
-                SpawnAndDeliver(index);
+
+                if (_shopType == ShopType.Item)
+                {
+                    SpawnAndDeliver(index);
+                }
+                else if (_shopType == ShopType.WeaponUpgrade)
+                {
+                    if (index < itemPrefabs.Length && itemPrefabs[index] != null && itemPrefabs[index].TryGetComponent(out WeaponItem weaponItem))
+                    {
+                        weaponItem.Data.currentUpgradeLevel++;
+                        UpdatePriceTexts(); // 즉시 가격 업데이트
+                    }
+                }
             }
             else
             {
