@@ -120,6 +120,8 @@ public class EnemyStats : MonoBehaviour, IDamageable
         IsDead = true;
         StopAllCoroutines();
 
+        EventManager.OnEnemyDied?.Invoke();
+
         if (data != null && data.isBoss)
             EventManager.OnBossDied?.Invoke();
 

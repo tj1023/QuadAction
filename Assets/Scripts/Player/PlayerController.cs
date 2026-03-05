@@ -217,6 +217,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnDodge(InputAction.CallbackContext context)
     {
+        if (!_inputEnabled) return;
         if (Time.time < _nextDodgeTime || _isDodging) return;
 
         // 회피 방향 = WASD 입력 방향, 입력이 없으면 캐릭터가 바라보는 방향
@@ -235,11 +236,13 @@ public class PlayerController : MonoBehaviour
 
     private void OnInteract(InputAction.CallbackContext context)
     {
+        if (!_inputEnabled) return;
         _playerInteraction?.PickupClosestItem();
     }
     
     private void OnSwapWeapon(InputAction.CallbackContext context)
     {
+        if (!_inputEnabled) return;
         if (_isDodging || _weaponManager == null) return;
         CancelAttack();
         
@@ -254,6 +257,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnFire(InputAction.CallbackContext context)
     {
+        if (!_inputEnabled) return;
         _isAttacking = true;
         
         if (_isDodging) return;
@@ -272,6 +276,7 @@ public class PlayerController : MonoBehaviour
     
     private void OnReLoad(InputAction.CallbackContext context)
     {
+        if (!_inputEnabled) return;
         CancelAttack();
         _weaponManager?.TryReload();
     }

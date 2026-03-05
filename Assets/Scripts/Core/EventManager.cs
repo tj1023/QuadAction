@@ -15,4 +15,8 @@ public static class EventManager
     public static Action<int> OnBossAppeared;              // (maxHp)
     public static Action<int, int> OnBossHpChanged;        // (currentHp, maxHp)
     public static Action OnBossDied;
+
+    // Stage
+    public static Action OnEnemyDied;
+    public static Action<int, StageManager.StageType> OnStageChanged; // (stageNumber, stageType)
 }
