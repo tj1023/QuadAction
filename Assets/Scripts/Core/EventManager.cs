@@ -41,14 +41,14 @@ public static class EventManager
 
     #region Boss Events
 
-    /// <summary>보스 등장 시 발행. (maxHp) — 보스 HP 바 초기화에 활용.</summary>
-    public static Action<int> OnBossAppeared;
+    /// <summary>보스 등장 시 발행. (bossStats) — 보스 HP 바 관리 및 초기화에 활용.</summary>
+    public static Action<EnemyStats> OnBossAppeared;
 
-    /// <summary>보스 HP 변경 시 발행. (currentHp, maxHp)</summary>
-    public static Action<int, int> OnBossHpChanged;
+    /// <summary>보스 HP 변경 시 발행. (bossStats) — 현재 체력 비율 업데이트에 활용.</summary>
+    public static Action<EnemyStats> OnBossHpChanged;
 
-    /// <summary>보스 사망 시 발행. 보스 HP 바 페이드아웃에 활용.</summary>
-    public static Action OnBossDied;
+    /// <summary>보스 사망 시 발행. (bossStats) — 모든 보스가 죽었는지 판별하여 UI 페이드아웃에 활용.</summary>
+    public static Action<EnemyStats> OnBossDied;
 
     #endregion
 

@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -24,6 +25,7 @@ public class UIBossHp : MonoBehaviour
 
     private float _targetFillAmount;
     private bool _isVisible;
+    private readonly System.Collections.Generic.HashSet<EnemyStats> _activeBosses = new();
 
     private void Awake()
     {
@@ -56,8 +58,12 @@ public class UIBossHp : MonoBehaviour
         }
     }
 
-    private void OnBossAppeared(int maxHp)
+    private void OnBossAppeared(EnemyStats bossStats)
     {
+        if (bossStats == null) return;
+        
+        _activeBosses.Add(bossStats);
+
         _targetFillAmount = 1f;
         if (hpBar != null) hpBar.fillAmount = 1f;
         if (delayedBar != null) delayedBar.fillAmount = 1f;
@@ -66,8 +72,13 @@ public class UIBossHp : MonoBehaviour
         StartCoroutine(FadeIn());
     }
 
-    private void OnBossHpChanged(int currentHp, int maxHp)
+    private void OnBossHpChanged(EnemyStats bossStats)
     {
+        if (bossStats == null || bossStats.Data == null) return;
+        
+        int maxHp = bossStats.Data.MaxHp;
+        int currentHp = bossStats.CurrentHp;
+        
         if (maxHp <= 0) return;
         
         float ratio = (float)currentHp / maxHp;
@@ -77,8 +88,21 @@ public class UIBossHp : MonoBehaviour
         if (hpText != null) hpText.text = $"{currentHp}/{maxHp}";
     }
 
-    private void OnBossDied()
+    private void OnBossDied(EnemyStats bossStats)
     {
+        if (bossStats != null)
+            _activeBosses.Remove(bossStats);
+
+        if (_activeBosses.Count > 0)
+        {
+            // 남은 보스가 있다면 아무 보스(가장 첫 번째)의 체력으로 UI를 대체합니다.
+            EnemyStats remainingBoss = _activeBosses.FirstOrDefault();
+            if (remainingBoss != null)
+                OnBossHpChanged(remainingBoss);
+            
+            return; // UI 유지
+        }
+
         StopAllCoroutines();
         StartCoroutine(FadeOut());
     }

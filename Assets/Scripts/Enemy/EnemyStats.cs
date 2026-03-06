@@ -22,6 +22,9 @@ public class EnemyStats : MonoBehaviour, IDamageable
     /// <summary>현재 할당된 적 데이터(ScriptableObject).</summary>
     public EnemyData Data => data;
 
+    /// <summary>현재 체력.</summary>
+    public int CurrentHp => _currentHp;
+
     /// <summary>사망 상태 여부.</summary>
     public bool IsDead { get; private set; }
 
@@ -51,7 +54,7 @@ public class EnemyStats : MonoBehaviour, IDamageable
             _currentHp = data.MaxHp;
 
             if (data.IsBoss)
-                EventManager.OnBossAppeared?.Invoke(data.MaxHp);
+                EventManager.OnBossAppeared?.Invoke(this);
         }
 
         // 원본 색상 복원 (풀에서 재사용될 때를 대비)
@@ -109,7 +112,7 @@ public class EnemyStats : MonoBehaviour, IDamageable
         _currentHp = Mathf.Max(_currentHp, 0);
 
         if (data != null && data.IsBoss)
-            EventManager.OnBossHpChanged?.Invoke(_currentHp, data.MaxHp);
+            EventManager.OnBossHpChanged?.Invoke(this);
 
         if (data != null && data.HitSound != null)
             SoundManager.Instance.PlaySfx(data.HitSound);
@@ -174,7 +177,7 @@ public class EnemyStats : MonoBehaviour, IDamageable
         EventManager.OnEnemyDied?.Invoke();
 
         if (data != null && data.IsBoss)
-            EventManager.OnBossDied?.Invoke();
+            EventManager.OnBossDied?.Invoke(this);
 
         DropCoin();
 
