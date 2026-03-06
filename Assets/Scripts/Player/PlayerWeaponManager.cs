@@ -276,6 +276,7 @@ public class PlayerWeaponManager : MonoBehaviour
         if (data.GrenadePrefab == null || firePoint == null) return;
 
         Vector3 spawnPos = firePoint.position;
+        spawnPos.y = 3.2f;
 
         Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
         if (!Physics.Raycast(ray, out RaycastHit hit, MouseRayMaxDistance))
