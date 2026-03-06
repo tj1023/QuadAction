@@ -17,7 +17,7 @@ MonoBehaviour:
   attackPower: 20
   attackRate: 3
   moveSpeed: 10
-  chaseRange: 30
+  chaseRange: 40
   attackRange: 20
   knockbackResistance: 1
   useDash: 0

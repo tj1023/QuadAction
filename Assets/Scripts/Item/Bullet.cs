@@ -3,8 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Bullet : MonoBehaviour
 {
-    [SerializeField] private float lifeTime = 5f;
-
+    private const float LifeTime = 1f;
     private int _damage;
     private float _knockbackForce;
     private Rigidbody _rb;
@@ -23,7 +22,7 @@ public class Bullet : MonoBehaviour
         _knockbackForce = knockbackForce;
         _rb.useGravity = false;
         _rb.linearVelocity = direction.normalized * speed;
-        _deactivateTime = Time.time + lifeTime;
+        _deactivateTime = Time.time + LifeTime;
         _trailRenderer?.Clear();
     }
 

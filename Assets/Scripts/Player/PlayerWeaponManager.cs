@@ -109,13 +109,13 @@ public class PlayerWeaponManager : MonoBehaviour
         // 드랍용 프리팹(아이템) 바닥에 생성
         if (weaponToDrop.Data.dropPrefab != null)
         {
-            Vector3 dropPosition = transform.position + transform.forward * 0.5f + Vector3.up * 1.2f;
+            Vector3 dropPosition = transform.position + transform.forward * 2f + Vector3.up * 2f;
             GameObject droppedItemObj = Instantiate(weaponToDrop.Data.dropPrefab, dropPosition, Quaternion.identity);
             
             if (droppedItemObj.TryGetComponent(out Rigidbody rb))
             {
                 rb.constraints = RigidbodyConstraints.FreezeRotation;
-                rb.AddForce((transform.forward + Vector3.up * 0.5f).normalized * 4.0f, ForceMode.Impulse);
+                rb.AddForce((transform.forward + Vector3.up).normalized * 4.0f, ForceMode.Impulse);
             }
         }
 
