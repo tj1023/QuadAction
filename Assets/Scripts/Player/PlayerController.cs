@@ -29,6 +29,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float dodgeCooldown = 1.2f;
     [SerializeField] private float dodgeSpeedMultiplier = 2.5f;
 
+    [Header("Audio Settings")]
+    [SerializeField] private AudioClip[] footstepSounds;
+    [SerializeField] private float footstepInterval = 0.4f;
+    [SerializeField] private AudioClip dodgeSound;
+
     private Camera _mainCamera;
     private CharacterController _controller;
     private PlayerAnimator _animator;
@@ -44,6 +49,7 @@ public class PlayerController : MonoBehaviour
     private bool _isDead;
     private float _verticalVelocity;
     private bool _inputEnabled = true;
+    private float _nextFootstepTime;
 
     // 0 = 쿨타임 완료 (즉시 사용 가능), 1 = 방금 사용 (쿨타임 최대)
     public float DodgeCooldownRatio => Mathf.Clamp01((_nextDodgeTime - Time.time) / dodgeCooldown);
@@ -195,7 +201,22 @@ public class PlayerController : MonoBehaviour
                 _animator?.SetMoving(isMoving);
                 _wasMoving = isMoving;
             }
+
+            // 발소리 재생 로직
+            if (isMoving && _controller.isGrounded && Time.time >= _nextFootstepTime)
+            {
+                PlayFootstepSound();
+                _nextFootstepTime = Time.time + footstepInterval;
+            }
         }
+    }
+
+    private void PlayFootstepSound()
+    {
+        if (footstepSounds == null || footstepSounds.Length == 0) return;
+        
+        AudioClip clip = footstepSounds[Random.Range(0, footstepSounds.Length)];
+        SoundManager.Instance.PlaySfx(clip, 0.4f);
     }
 
     private Vector3 GetCameraRelativeDirection(Vector2 input)
@@ -299,6 +320,9 @@ public class PlayerController : MonoBehaviour
         _isDodging = true;
         _nextDodgeTime = Time.time + dodgeCooldown;
         CancelAttack();
+
+        if (dodgeSound)
+            SoundManager.Instance.PlaySfx(dodgeSound);
 
         if (_animator)
         {

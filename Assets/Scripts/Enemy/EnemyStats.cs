@@ -59,6 +59,9 @@ public class EnemyStats : MonoBehaviour, IDamageable
 
         if (data != null && data.isBoss)
             EventManager.OnBossHpChanged?.Invoke(_currentHp, data.maxHp);
+            
+        if (data.hitSound)
+            SoundManager.Instance.PlaySfx(data.hitSound);
 
         if (_currentHp <= 0)
             Die();
@@ -71,8 +74,11 @@ public class EnemyStats : MonoBehaviour, IDamageable
         _currentHp -= damage;
         _currentHp = Mathf.Max(_currentHp, 0);
 
-        if (data != null && data.isBoss)
+        if (data && data.isBoss)
             EventManager.OnBossHpChanged?.Invoke(_currentHp, data.maxHp);
+
+        if (data.hitSound)
+            SoundManager.Instance.PlaySfx(data.hitSound);
 
         if (_currentHp <= 0)
         {

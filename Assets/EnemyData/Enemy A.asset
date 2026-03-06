@@ -28,3 +28,8 @@ MonoBehaviour:
   meleeAttackRange: 4
   coinPrefab: {fileID: 4496288406305556483, guid: f7be7581da9ea144698263679800a699, type: 3}
   bonusCoinChance: 0.2
+  attackSound: {fileID: 8300000, guid: 56703418e3aed4c47a5f6622816b8e41, type: 3}
+  hitSound: {fileID: 8300000, guid: 8b23b175a78d6b5458322e3a6c9905d0, type: 3}
+  bossJumpAttackSound: {fileID: 0}
+  bossMissileAttackSound: {fileID: 0}
+  bossRockAttackSound: {fileID: 0}

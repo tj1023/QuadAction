@@ -5,6 +5,7 @@ public class PlayerStats : MonoBehaviour, IDamageable
 {
     [SerializeField] private int maxHp = 100;
     [SerializeField] private float flashDuration = 0.15f;
+    [SerializeField] private AudioClip hitSound;
 
     private int _currentHp;
     private int _currentMoney;
@@ -36,6 +37,9 @@ public class PlayerStats : MonoBehaviour, IDamageable
         EventManager.OnHpChanged?.Invoke(_currentHp, maxHp);
         EventManager.OnPlayerHit?.Invoke();
         StartCoroutine(FlashYellow());
+
+        if (hitSound)
+            SoundManager.Instance.PlaySfx(hitSound);
 
         if (_currentHp <= 0)
             Die();

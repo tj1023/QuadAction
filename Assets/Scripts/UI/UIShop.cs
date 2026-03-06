@@ -17,6 +17,10 @@ public class UIShop : MonoBehaviour
     [Header("Item Settings")]
     [SerializeField] private GameObject[] itemPrefabs;
 
+    [Header("Audio")]
+    [SerializeField] private AudioClip purchaseSuccessSound;
+    [SerializeField] private AudioClip purchaseFailSound;
+
     [Header("Delivery")]
     [SerializeField] private float deliverySpeed = 10f;
 
@@ -107,6 +111,9 @@ public class UIShop : MonoBehaviour
             {
                 dialogueText.text = _purchaseDialogue;
 
+                if (purchaseSuccessSound)
+                    SoundManager.Instance.PlayUiSfx(purchaseSuccessSound);
+
                 if (_shopType == ShopType.Item)
                 {
                     SpawnAndDeliver(index);
@@ -123,6 +130,9 @@ public class UIShop : MonoBehaviour
             else
             {
                 dialogueText.text = _failDialogue;
+                
+                if (purchaseFailSound)
+                    SoundManager.Instance.PlayUiSfx(purchaseFailSound);
             }
         }
     }

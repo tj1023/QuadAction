@@ -34,4 +34,13 @@ public class EnemyData : ScriptableObject
     [Header("Coin Drop")]
     public GameObject coinPrefab;
     [Range(0f, 1f)] public float bonusCoinChance = 0.2f;
+
+    [Header("Audio")]
+    public AudioClip attackSound;
+    public AudioClip hitSound;
+    
+    [Header("Boss Audio")]
+    public AudioClip bossJumpAttackSound;
+    public AudioClip bossMissileAttackSound;
+    public AudioClip bossRockAttackSound;
 }

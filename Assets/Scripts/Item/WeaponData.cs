@@ -50,4 +50,7 @@ public class WeaponData : ScriptableObject
     public GameObject weaponPrefab;
     public GameObject dropPrefab;
     public Sprite weaponIcon;
+
+    [Header("Audio")]
+    public AudioClip attackSound;
 }

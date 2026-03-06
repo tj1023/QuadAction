@@ -30,3 +30,4 @@ MonoBehaviour:
   weaponPrefab: {fileID: 5599035374115904107, guid: 71f77ef2898c04043b1b350ec23282de, type: 3}
   dropPrefab: {fileID: 4802598322363444249, guid: 23317a7e05929184aa3681a214316a4d, type: 3}
   weaponIcon: {fileID: 21300000, guid: 1c436558df0caa04eb65bf6f8d065918, type: 3}
+  attackSound: {fileID: 8300000, guid: 323e15cfe809e114ab92c9f4b25e8bc2, type: 3}

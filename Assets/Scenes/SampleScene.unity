@@ -1086,6 +1086,10 @@ MonoBehaviour:
   gravity: -9.81
   dodgeCooldown: 1
   dodgeSpeedMultiplier: 3
+  footstepSounds:
+  - {fileID: 8300000, guid: 023ea3ddeaa8dd146b7633a0800e5a0e, type: 3}
+  footstepInterval: 0.4
+  dodgeSound: {fileID: 8300000, guid: f11db4559b3ffff45b62e9327fc5535d, type: 3}
 --- !u!4 &179743227 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5903297864969995812, guid: 8f5e135a19626f544908fc8f156144b9, type: 3}
@@ -1143,6 +1147,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
   maxHp: 100
   flashDuration: 0.15
+  hitSound: {fileID: 8300000, guid: 8b23b175a78d6b5458322e3a6c9905d0, type: 3}
 --- !u!143 &179743234
 CharacterController:
   m_ObjectHideFlags: 0
@@ -3232,6 +3237,8 @@ MonoBehaviour:
   - {fileID: 1488445506092921389, guid: ccdd0b3ee0650ba45ba8b61f7efbaf5a, type: 3}
   - {fileID: 31604804941244069, guid: 7d1607bc6e058c64b9ed4dfb1301a02b, type: 3}
   - {fileID: 6342572045223893623, guid: 66bacc6e3799ab74c80843dea7d39a5c, type: 3}
+  purchaseSuccessSound: {fileID: 8300000, guid: abdbbfd33a46f4549987385f85c536b5, type: 3}
+  purchaseFailSound: {fileID: 8300000, guid: 1ed8fb76fc64e4e46847348138782234, type: 3}
   deliverySpeed: 10
 --- !u!1 &631220678
 GameObject:
@@ -4712,7 +4719,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: $100
+  m_text: $0
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e233f8169aeb80a4c8533261044348b1, type: 2}
   m_sharedMaterial: {fileID: -8050854335319621193, guid: e233f8169aeb80a4c8533261044348b1, type: 2}
@@ -4792,6 +4799,55 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 935443285}
   m_CullTransparentMesh: 1
+--- !u!1 &961794605
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 961794607}
+  - component: {fileID: 961794606}
+  m_Layer: 0
+  m_Name: Sound Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &961794606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 961794605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3efdd765d0d2bc4e80619797ec25125, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SoundManager
+  globalBgm: {fileID: 8300000, guid: 9669960e415ea604d81fb0784634df79, type: 3}
+  masterVolume: 1
+  bgmVolume: 1
+  sfxVolume: 1
+  uiVolume: 1
+--- !u!4 &961794607
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 961794605}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -5425,6 +5481,8 @@ MonoBehaviour:
   - {fileID: 4802598322363444249, guid: 23317a7e05929184aa3681a214316a4d, type: 3}
   - {fileID: 6817520062330314810, guid: eea71867d65907045a92d15670981d45, type: 3}
   - {fileID: 3223043723327094020, guid: b887435a901ce2046acf855a83196017, type: 3}
+  purchaseSuccessSound: {fileID: 8300000, guid: abdbbfd33a46f4549987385f85c536b5, type: 3}
+  purchaseFailSound: {fileID: 8300000, guid: 1ed8fb76fc64e4e46847348138782234, type: 3}
   deliverySpeed: 10
 --- !u!224 &1109148662
 RectTransform:
@@ -10396,6 +10454,7 @@ SceneRoots:
   - {fileID: 963194228}
   - {fileID: 705507995}
   - {fileID: 18921782}
+  - {fileID: 961794607}
   - {fileID: 1845338282}
   - {fileID: 1785582185}
   - {fileID: 1188956838}

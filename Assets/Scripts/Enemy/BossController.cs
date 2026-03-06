@@ -134,6 +134,21 @@ public class BossController : MonoBehaviour
             _agent.updateRotation = false;
             _agent.speed = _stats.Data.moveSpeed;
             _agent.SetDestination(_player.position);
+                        
+            if (data.bossJumpAttackSound)
+                SoundManager.Instance.PlaySfx(data.bossJumpAttackSound);
+        }
+        else if (selectedAttack == AttackType.Missile && data.bossMissileAttackSound)
+        {
+            SoundManager.Instance.PlaySfx(data.bossMissileAttackSound);
+        }
+        else if (selectedAttack == AttackType.Rock && data.bossRockAttackSound)
+        {
+            SoundManager.Instance.PlaySfx(data.bossRockAttackSound);
+        }
+        else if (data.attackSound)
+        {
+            SoundManager.Instance.PlaySfx(data.attackSound);
         }
 
         _bossAnimator?.SetAttackIndex((int)selectedAttack);

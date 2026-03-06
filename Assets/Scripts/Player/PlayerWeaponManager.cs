@@ -153,6 +153,9 @@ public class PlayerWeaponManager : MonoBehaviour
             UpdateAmmoUI();
             _animator.PlayAttackAnimation(data.attackType);
             
+            if (data.attackSound)
+                SoundManager.Instance.PlaySfx(data.attackSound);
+            
             if (IsPrimaryRangedWeapon(_currentWeapon) && _currentWeapon.CurrentAmmo <= 0)
                 TryReload();
         }

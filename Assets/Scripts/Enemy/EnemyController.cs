@@ -160,6 +160,9 @@ public class EnemyController : MonoBehaviour
         _lastAttackTime = Time.time;
         _attackLockUntil = Time.time + data.attackRate;
         _enemyAnimator?.TriggerAttack();
+        
+        if (data.attackSound)
+            SoundManager.Instance.PlaySfx(data.attackSound);
     }
 
     public void EnableHitbox()
