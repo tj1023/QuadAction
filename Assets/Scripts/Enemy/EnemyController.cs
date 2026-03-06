@@ -187,6 +187,8 @@ public class EnemyController : MonoBehaviour
     /// <summary>근접 히트박스를 활성화합니다. 애니메이션 이벤트에서 호출됩니다.</summary>
     public void EnableHitbox()
     {
+        if (_stats != null && _stats.IsDead) return;
+
         if (meleeHitbox != null)
             meleeHitbox.Activate(_stats.Data.AttackPower);
     }
@@ -201,6 +203,7 @@ public class EnemyController : MonoBehaviour
     /// <summary>원거리 투사체를 발사합니다. 애니메이션 이벤트에서 호출됩니다.</summary>
     public void Fire()
     {
+        if (_stats != null && _stats.IsDead) return;
         if (!_stats.Data.IsRanged || missilePrefab == null || firePoint == null || _player == null) return;
 
         var missileObj = ObjectPool.Instance != null

@@ -181,6 +181,7 @@ public class BossController : MonoBehaviour
     /// <summary>미사일 투사체를 발사합니다. 애니메이션 이벤트에서 side(0=Left, 1=Right)로 호출됩니다.</summary>
     public void FireMissile(int side)
     {
+        if (_stats != null && _stats.IsDead) return;
         if (missilePrefab == null || _player == null) return;
 
         Transform firePoint = side == 0 ? firePointLeft : firePointRight;
@@ -201,6 +202,7 @@ public class BossController : MonoBehaviour
     /// <summary>바위 투사체를 발사합니다. 애니메이션 이벤트에서 호출됩니다.</summary>
     public void FireRock()
     {
+        if (_stats != null && _stats.IsDead) return;
         if (rockPrefab == null || firePointMouth == null || _player == null) return;
 
         var rockObj = ObjectPool.Instance != null
@@ -218,6 +220,8 @@ public class BossController : MonoBehaviour
     /// <summary>근접 히트박스를 활성화합니다. 애니메이션 이벤트에서 호출됩니다.</summary>
     public void EnableMeleeHitbox()
     {
+        if (_stats != null && _stats.IsDead) return;
+
         _agent.ResetPath();
         _agent.speed = _stats.Data.MoveSpeed;
 

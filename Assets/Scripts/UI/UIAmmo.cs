@@ -8,7 +8,6 @@ using TMPro;
 public class UIAmmo : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI ammoText;
-    [SerializeField] private GameObject ammoPanel;
 
     private void OnEnable()
     {
@@ -22,13 +21,6 @@ public class UIAmmo : MonoBehaviour
 
     private void UpdateAmmo(int current, int reserve)
     {
-        if (current < 0 || reserve < 0)
-        {
-            if (ammoPanel != null) ammoPanel.SetActive(false);
-            return;
-        }
-
-        if (ammoPanel != null) ammoPanel.SetActive(true);
-        if (ammoText != null) ammoText.text = $"{current} / {reserve}";
+        if (ammoText != null) ammoText.text = current < 0 ? "" : $"{current}/{reserve}";
     }
 }

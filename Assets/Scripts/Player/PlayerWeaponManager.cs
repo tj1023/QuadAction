@@ -248,12 +248,15 @@ public class PlayerWeaponManager : MonoBehaviour
     {
         if (data.BulletPrefab == null || firePoint == null) return;
 
+        Vector3 spawnPos = firePoint.position;
+        spawnPos.y = 3.2f; // 캐릭터 움직임에 따라 높이가 다르게 스폰되는 것을 방지
+
         Vector3 direction = firePoint.forward;
-        direction.y = 0;
+        direction.y = 0; // 발사 각도는 땅과 수평으로 유지
         direction.Normalize();
 
         GameObject bulletObj = ObjectPool.Instance.Get(
-            data.BulletPrefab, firePoint.position, Quaternion.LookRotation(direction));
+            data.BulletPrefab, spawnPos, Quaternion.LookRotation(direction));
         if (bulletObj.TryGetComponent(out Bullet bullet))
         {
             bullet.Initialize(
