@@ -1,12 +1,29 @@
 using UnityEngine;
 using UnityEngine.AI;
 
+/// <summary>
+/// 일반 적 AI를 제어하는 FSM 기반 컨트롤러.
+/// Idle → Chase → (Dash →) Attack 상태를 거리 기반으로 전환합니다.
+/// 
+/// <para><b>설계 의도</b>: State 열거형 + switch문으로 간결한 FSM을 구현합니다.
+/// 상태 전환 시 ChangeState()에서 진입/퇴장 로직을 일괄 처리하여
+/// Update()의 복잡도를 줄이고 상태 전환 버그를 방지합니다.</para>
+/// 
+/// <para><b>대시 공격</b>: 일부 적은 useDash=true일 때 일정 거리에서
+/// 순간적으로 가속하여 플레이어에게 돌진합니다.
+/// acceleration을 극대화하여 즉각적인 가속 효과를 만듭니다.</para>
+/// </summary>
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(EnemyStats))]
 public class EnemyController : MonoBehaviour
 {
     private enum State { Idle, Chase, Attack, Dash }
-    
+
+    private const float DashAcceleration = 2000f;
+    private const float DeathReleaseDelay = 2f;
+    private const float RagdollReleaseDelay = 5f;
+    private const float RagdollUpwardForce = 3f;
+
     [Header("Melee Setup")]
     [SerializeField] private EnemyMeleeHitbox meleeHitbox;
     
@@ -40,19 +57,18 @@ public class EnemyController : MonoBehaviour
         
         DisableHitbox();
 
-        // 씬에서 플레이어 자동 탐색
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
             _player = playerObj.transform;
 
         if (_stats != null && _stats.Data != null && _agent != null)
         {
-            _agent.speed = _stats.Data.moveSpeed;
+            _agent.speed = _stats.Data.MoveSpeed;
             _agent.acceleration = _originalAcceleration;
             _agent.enabled = true;
             _agent.isStopped = false;
             
-            // 적끼리 겹치지 않도록 회피 설정
+            // 적끼리 겹치지 않도록 회피 우선순위를 랜덤 분배
             _agent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
             _agent.avoidancePriority = Random.Range(30, 70);
         }
@@ -70,7 +86,7 @@ public class EnemyController : MonoBehaviour
         }
         
         Animator anim = GetComponentInChildren<Animator>();
-        if (anim)
+        if (anim != null)
         {
             anim.enabled = true;
             anim.Rebind();
@@ -89,12 +105,12 @@ public class EnemyController : MonoBehaviour
         if (Time.time < _attackLockUntil)
             return;
 
-        // 상태 전환
-        if (distance <= data.attackRange)
+        // 거리 기반 상태 전환
+        if (distance <= data.AttackRange)
             ChangeState(State.Attack);
-        else if (data.useDash && distance <= data.dashRange)
+        else if (data.UseDash && distance <= data.DashRange)
             ChangeState(State.Dash);
-        else if (distance <= data.chaseRange)
+        else if (distance <= data.ChaseRange)
             ChangeState(State.Chase);
         else
             ChangeState(State.Idle);
@@ -119,35 +135,38 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 상태 전환을 처리합니다. 상태 진입/퇴장 시 필요한 파라미터 변경을 일괄 수행합니다.
+    /// </summary>
     private void ChangeState(State newState)
     {
         if (_currentState == newState) return;
         
         EnemyData data = _stats.Data;
 
-        // 이전 상태를 빠져나올 때의 처리 (Dash 해제 시 속도 원상복구)
+        // Dash 상태 퇴장 시 속도 복원
         if (_currentState == State.Dash && newState != State.Dash)
         {
-            _agent.speed = data.moveSpeed;
+            _agent.speed = data.MoveSpeed;
             _agent.acceleration = _originalAcceleration;
         }
         
         _currentState = newState;
 
-        // 새로운 상태 진입 시의 처리 (Dash 진입 시 속도 증가)
+        // Dash 상태 진입 시 가속도 극대화로 즉각 최고 속도 도달
         if (_currentState == State.Dash)
         {
-            _agent.speed = data.dashSpeed;
-            _agent.acceleration = 2000f; // 순간적으로 최고 속도에 도달하도록 가속도 대폭 증가
+            _agent.speed = data.DashSpeed;
+            _agent.acceleration = DashAcceleration;
         }
 
-        // Chase와 Dash 상태 모두 이동 애니메이션(뛰기)을 재생하도록 처리
         bool isMoving = (newState == State.Chase || newState == State.Dash);
         _enemyAnimator?.SetMoving(isMoving);
     }
 
     private void LookAtPlayer()
     {
+        if (_player == null) return;
         Vector3 dir = (_player.position - transform.position).normalized;
         dir.y = 0;
         if (dir != Vector3.zero)
@@ -156,32 +175,37 @@ public class EnemyController : MonoBehaviour
 
     private void TryAttack(EnemyData data)
     {
-        if (Time.time - _lastAttackTime < data.attackRate) return;
+        if (Time.time - _lastAttackTime < data.AttackRate) return;
         _lastAttackTime = Time.time;
-        _attackLockUntil = Time.time + data.attackRate;
+        _attackLockUntil = Time.time + data.AttackRate;
         _enemyAnimator?.TriggerAttack();
         
-        if (data.attackSound)
-            SoundManager.Instance.PlaySfx(data.attackSound);
+        if (data.AttackSound != null)
+            SoundManager.Instance.PlaySfx(data.AttackSound);
     }
 
+    /// <summary>근접 히트박스를 활성화합니다. 애니메이션 이벤트에서 호출됩니다.</summary>
     public void EnableHitbox()
     {
-        if (meleeHitbox)
-            meleeHitbox.Activate(_stats.Data.attackPower);
+        if (meleeHitbox != null)
+            meleeHitbox.Activate(_stats.Data.AttackPower);
     }
 
+    /// <summary>근접 히트박스를 비활성화합니다. 애니메이션 이벤트에서 호출됩니다.</summary>
     public void DisableHitbox()
     {
-        if (meleeHitbox)
+        if (meleeHitbox != null)
             meleeHitbox.Deactivate();
     }
     
+    /// <summary>원거리 투사체를 발사합니다. 애니메이션 이벤트에서 호출됩니다.</summary>
     public void Fire()
     {
-        if (!_stats.Data.isRanged || missilePrefab == null || firePoint == null || _player == null) return;
+        if (!_stats.Data.IsRanged || missilePrefab == null || firePoint == null || _player == null) return;
 
-        var missileObj = ObjectPool.Instance ? ObjectPool.Instance.Get(missilePrefab, firePoint.position, transform.rotation) : Instantiate(missilePrefab, firePoint.position, transform.rotation);
+        var missileObj = ObjectPool.Instance != null
+            ? ObjectPool.Instance.Get(missilePrefab, firePoint.position, transform.rotation)
+            : Instantiate(missilePrefab, firePoint.position, transform.rotation);
         
         Vector3 targetPos = _player.position;
         targetPos.y = firePoint.position.y;
@@ -191,6 +215,10 @@ public class EnemyController : MonoBehaviour
             enemyMissile.Initialize(_player, dir);
     }
     
+    /// <summary>
+    /// 사망 처리. NavMeshAgent를 정지시키고 애니메이션을 재생한 뒤 풀에 반환합니다.
+    /// </summary>
+    /// <param name="willRagdoll">래그돌 물리를 적용할지 여부.</param>
     public void OnDeath(bool willRagdoll = false)
     {
         _agent.isStopped = true;
@@ -210,18 +238,22 @@ public class EnemyController : MonoBehaviour
                 col.enabled = false;
         }
 
-        StartCoroutine(ReleaseRoutine(willRagdoll ? 5f : 2f));
+        StartCoroutine(ReleaseRoutine(willRagdoll ? RagdollReleaseDelay : DeathReleaseDelay));
     }
 
     private System.Collections.IEnumerator ReleaseRoutine(float delay)
     {
         yield return new WaitForSeconds(delay);
-        if (ObjectPool.Instance)
+        if (ObjectPool.Instance != null)
             ObjectPool.Instance.Release(gameObject);
         else
             Destroy(gameObject);
     }
 
+    /// <summary>
+    /// 수류탄 등 폭발에 의한 래그돌 물리를 적용합니다.
+    /// NavMeshAgent를 비활성화하고 Rigidbody에 물리 힘을 가합니다.
+    /// </summary>
     public void LaunchRagdoll(Vector3 explosionPos, float force)
     {
         if (_agent.isOnNavMesh && _agent.enabled)
@@ -233,10 +265,10 @@ public class EnemyController : MonoBehaviour
 
         StopAllCoroutines();
         if (_stats != null && _stats.IsDead)
-            StartCoroutine(ReleaseRoutine(5f));
+            StartCoroutine(ReleaseRoutine(RagdollReleaseDelay));
 
         Animator anim = GetComponentInChildren<Animator>();
-        if (anim) anim.enabled = false;
+        if (anim != null) anim.enabled = false;
 
         if (TryGetComponent(out Collider col))
         {
@@ -253,10 +285,10 @@ public class EnemyController : MonoBehaviour
             rb.angularVelocity = Vector3.zero;
 
             Vector3 reactVec = (transform.position - explosionPos).normalized;
-            reactVec += Vector3.up * 3f;
+            reactVec += Vector3.up * RagdollUpwardForce;
 
             rb.AddForce(reactVec * force, ForceMode.Impulse);
-            rb.AddTorque(reactVec * force * 3f, ForceMode.Impulse);
+            rb.AddTorque(reactVec * force * RagdollUpwardForce, ForceMode.Impulse);
         }
     }
 }

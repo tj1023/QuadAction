@@ -12,22 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d90201744b531a4cbdd07ba4a883cf2, type: 3}
   m_Name: HandGun
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
-  slot: 1
-  attackType: 1
-  weaponName: HandGun
+  weaponSlot: 1
+  weaponAttackType: 1
+  weaponDisplayName: Hand Gun
   attackPower: 5
   attackRate: 0.3
   maxAmmo: 0
   knockbackForce: 2
-  currentUpgradeLevel: 0
   baseUpgradePrice: 1000
-  priceIncreasePerLevel: 50
+  priceIncreasePerLevel: 500
   damageIncreasePerLevel: 3
   bulletPrefab: {fileID: 8094185768026117911, guid: 15e89cf230278aa4c8b1e5e9c8ab176d, type: 3}
   bulletSpeed: 30
   grenadePrefab: {fileID: 0}
   explosionRadius: 10
-  weaponPrefab: {fileID: 1509416925549156319, guid: a2e051660762cbe4494c17a095a95e10, type: 3}
-  dropPrefab: {fileID: 6817520062330314810, guid: eea71867d65907045a92d15670981d45, type: 3}
+  weaponModelPrefab: {fileID: 1509416925549156319, guid: dbff49a70fd5d514f92acc275ce796be, type: 3}
+  dropItemPrefab: {fileID: 6817520062330314810, guid: eea71867d65907045a92d15670981d45, type: 3}
   weaponIcon: {fileID: 21300000, guid: 3260f72e5b6eec24587b9132cb1ae0a0, type: 3}
   attackSound: {fileID: 8300000, guid: 6739c01659ad96d47987f4ddee226b36, type: 3}

@@ -3,31 +3,31 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+/// <summary>
+/// 보스 HP 바 UI. 보스 등장 시 페이드인, 사망 시 페이드아웃됩니다.
+/// 
+/// <para><b>딜레이 바</b>: 즉시 반응하는 HP 바(hpBar)와 일정 딜레이 후 따라오는
+/// 지연 바(delayedBar)를 함께 사용하여 데미지 량의 직관적으로 보여줍니다.</para>
+/// </summary>
 public class UIBossHp : MonoBehaviour
 {
-    [Header("UI References")]
+    [Header("UI Elements")]
     [SerializeField] private CanvasGroup canvasGroup;
-    [SerializeField] private Image fillImage;
-    [SerializeField] private Image delayedFillImage;
+    [SerializeField] private Image hpBar;
+    [SerializeField] private Image delayedBar;
     [SerializeField] private TextMeshProUGUI hpText;
     
-    [Header("Settings")]
-    [SerializeField] private float fadeDuration = 0.5f;
-    [SerializeField] private float delayedBarSpeed = 0.4f;
-    [SerializeField] private float delayedBarWait = 0.5f;
+    [Header("Animation Settings")]
+    [SerializeField] private float fadeDuration = 1f;
+    [SerializeField] private float delayedBarSpeed = 2f;
+    [SerializeField] private float barDelay = 0.5f;
 
-    private float _targetFill;
-    private float _delayedFill;
-    private Coroutine _fadeCoroutine;
-    private Coroutine _delayedBarCoroutine;
+    private float _targetFillAmount;
+    private bool _isVisible;
 
     private void Awake()
     {
-        if (canvasGroup != null)
-        {
-            canvasGroup.alpha = 0f;
-            canvasGroup.blocksRaycasts = false;
-        }
+        if (canvasGroup != null) canvasGroup.alpha = 0f;
     }
 
     private void OnEnable()
@@ -44,92 +44,77 @@ public class UIBossHp : MonoBehaviour
         EventManager.OnBossDied -= OnBossDied;
     }
 
-    // ─────────────────────────── 이벤트 핸들러 ───────────────────────────
+    private void Update()
+    {
+        if (!_isVisible || delayedBar == null) return;
+
+        // 딜레이 바가 실제 HP 바를 부드럽게 따라감
+        if (delayedBar.fillAmount > _targetFillAmount)
+        {
+            delayedBar.fillAmount -= delayedBarSpeed * Time.deltaTime;
+            delayedBar.fillAmount = Mathf.Max(delayedBar.fillAmount, _targetFillAmount);
+        }
+    }
 
     private void OnBossAppeared(int maxHp)
     {
-        // 체력바 초기화
-        _targetFill = 1f;
-        _delayedFill = 1f;
-
-        if (fillImage != null)
-            fillImage.fillAmount = 1f;
-        if (delayedFillImage != null)
-            delayedFillImage.fillAmount = 1f;
-
-        // 페이드 인
-        FadeTo(1f);
+        _targetFillAmount = 1f;
+        if (hpBar != null) hpBar.fillAmount = 1f;
+        if (delayedBar != null) delayedBar.fillAmount = 1f;
+        
+        StopAllCoroutines();
+        StartCoroutine(FadeIn());
     }
 
     private void OnBossHpChanged(int currentHp, int maxHp)
     {
-        _targetFill = maxHp > 0 ? (float)currentHp / maxHp : 0f;
-
-        // 메인 바 즉시 반영
-        if (fillImage != null)
-            fillImage.fillAmount = _targetFill;
-
-        // 지연 바 코루틴 시작
-        if (_delayedBarCoroutine != null)
-            StopCoroutine(_delayedBarCoroutine);
-        _delayedBarCoroutine = StartCoroutine(AnimateDelayedBar());
+        if (maxHp <= 0) return;
         
-        if (hpText) hpText.text = $"{currentHp}/{maxHp}";
+        float ratio = (float)currentHp / maxHp;
+        _targetFillAmount = ratio;
+
+        if (hpBar != null) hpBar.fillAmount = ratio;
+        if (hpText != null) hpText.text = $"{currentHp}/{maxHp}";
     }
 
     private void OnBossDied()
     {
-        // 페이드 아웃
-        FadeTo(0f);
+        StopAllCoroutines();
+        StartCoroutine(FadeOut());
     }
 
-    // ─────────────────────────── 지연 감소 바 ───────────────────────────
-
-    private IEnumerator AnimateDelayedBar()
+    private IEnumerator FadeIn()
     {
-        // 잠시 대기 후 줄어들기 시작
-        yield return new WaitForSeconds(delayedBarWait);
-
-        while (_delayedFill > _targetFill + 0.001f)
-        {
-            _delayedFill = Mathf.MoveTowards(_delayedFill, _targetFill, delayedBarSpeed * Time.deltaTime);
-
-            if (delayedFillImage != null)
-                delayedFillImage.fillAmount = _delayedFill;
-
-            yield return null;
-        }
-
-        // 최종 값 보정
-        _delayedFill = _targetFill;
-        if (delayedFillImage != null)
-            delayedFillImage.fillAmount = _delayedFill;
-    }
-
-    // ─────────────────────────── 페이드 ───────────────────────────
-
-    private void FadeTo(float targetAlpha)
-    {
-        if (canvasGroup == null) return;
-
-        if (_fadeCoroutine != null)
-            StopCoroutine(_fadeCoroutine);
-        _fadeCoroutine = StartCoroutine(FadeRoutine(targetAlpha));
-    }
-
-    private IEnumerator FadeRoutine(float targetAlpha)
-    {
-        float startAlpha = canvasGroup.alpha;
+        _isVisible = true;
         float elapsed = 0f;
 
         while (elapsed < fadeDuration)
         {
             elapsed += Time.deltaTime;
-            canvasGroup.alpha = Mathf.Lerp(startAlpha, targetAlpha, elapsed / fadeDuration);
+            if (canvasGroup != null)
+                canvasGroup.alpha = Mathf.Lerp(0f, 1f, elapsed / fadeDuration);
+            yield return null;
+        }
+        
+        if (canvasGroup != null) canvasGroup.alpha = 1f;
+    }
+
+    private IEnumerator FadeOut()
+    {
+        yield return new WaitForSeconds(barDelay);
+
+        float startAlpha = canvasGroup != null ? canvasGroup.alpha : 1f;
+        float elapsed = 0f;
+
+        while (elapsed < fadeDuration)
+        {
+            elapsed += Time.deltaTime;
+            if (canvasGroup != null)
+                canvasGroup.alpha = Mathf.Lerp(startAlpha, 0f, elapsed / fadeDuration);
             yield return null;
         }
 
-        canvasGroup.alpha = targetAlpha;
-        canvasGroup.blocksRaycasts = targetAlpha > 0.5f;
+        if (canvasGroup != null) canvasGroup.alpha = 0f;
+        _isVisible = false;
     }
 }

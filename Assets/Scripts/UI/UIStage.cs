@@ -1,6 +1,10 @@
 using UnityEngine;
 using TMPro;
 
+/// <summary>
+/// 스테이지 표시 UI. EventManager.OnStageChanged를 구독하여
+/// 현재 스테이지 번호와 유형(Combat/Shop)을 표시합니다.
+/// </summary>
 public class UIStage : MonoBehaviour
 {
     [SerializeField] private TMP_Text stageText;
@@ -17,7 +21,7 @@ public class UIStage : MonoBehaviour
 
     private void OnStageChanged(int stageNumber, StageManager.StageType stageType)
     {
-        if (!stageText) return;
+        if (stageText == null) return;
 
         string typeName = stageType switch
         {

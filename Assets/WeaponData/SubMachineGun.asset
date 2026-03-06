@@ -12,22 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d90201744b531a4cbdd07ba4a883cf2, type: 3}
   m_Name: SubMachineGun
   m_EditorClassIdentifier: Assembly-CSharp::WeaponData
-  slot: 0
-  attackType: 1
-  weaponName: SubMachineGun
+  weaponSlot: 0
+  weaponAttackType: 1
+  weaponDisplayName: Sub Machine Gun
   attackPower: 5
   attackRate: 0.1
   maxAmmo: 30
   knockbackForce: 2
-  currentUpgradeLevel: 0
   baseUpgradePrice: 1500
-  priceIncreasePerLevel: 50
+  priceIncreasePerLevel: 500
   damageIncreasePerLevel: 1
   bulletPrefab: {fileID: 539718263462190179, guid: ef9b913b0f7d6cf4084de036097b90c8, type: 3}
   bulletSpeed: 50
   grenadePrefab: {fileID: 0}
   explosionRadius: 10
-  weaponPrefab: {fileID: 547435428816858648, guid: 203326381d9b54d489646c6c2f61f53a, type: 3}
-  dropPrefab: {fileID: 3223043723327094020, guid: b887435a901ce2046acf855a83196017, type: 3}
+  weaponModelPrefab: {fileID: 547435428816858648, guid: ee8f2d17ced4b1d46a63d478fa212417, type: 3}
+  dropItemPrefab: {fileID: 3223043723327094020, guid: b887435a901ce2046acf855a83196017, type: 3}
   weaponIcon: {fileID: 21300000, guid: 744566287c3cef64f9b897280e5d9b1a, type: 3}
   attackSound: {fileID: 8300000, guid: 75adfe9a619833445a701305b983e548, type: 3}

@@ -1,6 +1,17 @@
 using System.Collections;
 using UnityEngine;
 
+/// <summary>
+/// 적이 발사하는 투사체(미사일·바위).
+/// IDamageable을 구현하여 플레이어가 투사체를 파괴할 수 있습니다.
+/// 
+/// <para><b>유도(Homing) 기능</b>: isHoming=true이면 FixedUpdate에서
+/// RotateTowards를 사용해 부드러운 유도 회전을 수행합니다.
+/// FixedUpdate에서 처리하여 물리 시뮬레이션과 동기화합니다.</para>
+/// 
+/// <para><b>비주얼 스핀</b>: meshTransform이 할당되면 별도의 축으로
+/// 회전시켜 비행 중 시각적 효과를 더합니다(바위 굴러가는 느낌 등).</para>
+/// </summary>
 [RequireComponent(typeof(Rigidbody))]
 public class EnemyMissile : MonoBehaviour, IDamageable
 {
@@ -43,6 +54,7 @@ public class EnemyMissile : MonoBehaviour, IDamageable
             _originalColor = mainRenderer.material.color;
     }
     
+    /// <summary>커스텀 데미지·속도로 초기화합니다.</summary>
     public void Initialize(int damage, float speed, Transform target, Vector3 initialDirection)
     {
         _damage = damage;
@@ -53,13 +65,13 @@ public class EnemyMissile : MonoBehaviour, IDamageable
         _rb.useGravity = false;
         _deactivateTime = Time.time + lifeTime;
 
-        // 발사 직후의 초기 방향 및 속도 설정
         transform.rotation = Quaternion.LookRotation(initialDirection);
         _rb.linearVelocity = transform.forward * _speed;
         
         ResetColor();
     }
     
+    /// <summary>기본 데미지·속도로 초기화합니다. 보스 공격에서 주로 사용됩니다.</summary>
     public void Initialize(Transform target, Vector3 initialDirection)
     {
         Initialize(defaultDamage, defaultSpeed, target, initialDirection);
@@ -73,15 +85,16 @@ public class EnemyMissile : MonoBehaviour, IDamageable
             return;
         }
         
-        if (isHoming && _target && _target.gameObject.activeInHierarchy)
+        if (isHoming && _target != null && _target.gameObject.activeInHierarchy)
         {
             Vector3 targetPos = _target.position;
             targetPos.y = transform.position.y;
 
             Vector3 direction = (targetPos - transform.position).normalized;
 
-            // 부드러운 회전 처리
-            Vector3 newDirection = Vector3.RotateTowards(transform.forward, direction, rotateSpeed * Time.fixedDeltaTime, 0f);
+            // RotateTowards로 부드러운 유도 회전 (급격한 방향 전환 방지)
+            Vector3 newDirection = Vector3.RotateTowards(
+                transform.forward, direction, rotateSpeed * Time.fixedDeltaTime, 0f);
             transform.rotation = Quaternion.LookRotation(newDirection);
             
             _rb.linearVelocity = transform.forward * _speed;
@@ -90,7 +103,7 @@ public class EnemyMissile : MonoBehaviour, IDamageable
 
     private void Update()
     {
-        if (meshTransform && spinSpeed != 0f)
+        if (meshTransform != null && spinSpeed != 0f)
             meshTransform.Rotate(spinAxis * (spinSpeed * Time.deltaTime), Space.Self);
     }
 
@@ -104,6 +117,7 @@ public class EnemyMissile : MonoBehaviour, IDamageable
         Explode();
     }
 
+    /// <inheritdoc/>
     public void TakeDamage(int damage)
     {
         _currentHp -= damage;
@@ -121,7 +135,7 @@ public class EnemyMissile : MonoBehaviour, IDamageable
     
     private IEnumerator FlashRoutine()
     {
-        if (mainRenderer)
+        if (mainRenderer != null)
         {
             mainRenderer.material.color = flashColor;
             yield return new WaitForSeconds(flashDuration);
@@ -131,13 +145,14 @@ public class EnemyMissile : MonoBehaviour, IDamageable
     
     private void ResetColor()
     {
-        if (mainRenderer)
+        if (mainRenderer != null)
             mainRenderer.material.color = _originalColor;
     }
     
+    /// <summary>폭발 이펙트를 생성하고 풀에 반환합니다.</summary>
     private void Explode()
     {
-        if (effectPrefab && ObjectPool.Instance)
+        if (effectPrefab != null && ObjectPool.Instance != null)
             ObjectPool.Instance.Get(effectPrefab, transform.position, Quaternion.identity);
         
         ReturnToPool();
@@ -153,7 +168,7 @@ public class EnemyMissile : MonoBehaviour, IDamageable
         ResetColor();
         
         _rb.linearVelocity = Vector3.zero;
-        if (ObjectPool.Instance)
+        if (ObjectPool.Instance != null)
             ObjectPool.Instance.Release(gameObject);
         else
             gameObject.SetActive(false);

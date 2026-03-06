@@ -1,45 +1,38 @@
-using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+/// <summary>
+/// 게임 오버 UI. 플레이어 사망 시 표시, 재시작 버튼
+/// </summary>
 public class UIGameOver : MonoBehaviour
 {
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private Button retryButton;
-    [SerializeField] private float showDelay = 2f;
 
     private void Awake()
     {
-        if (gameOverPanel) gameOverPanel.SetActive(false);
+        if (gameOverPanel != null) gameOverPanel.SetActive(false);
+        if (retryButton != null) retryButton.onClick.AddListener(OnRetry);
     }
 
     private void OnEnable()
     {
-        EventManager.OnPlayerDeath += OnPlayerDeath;
-        if (retryButton) retryButton.onClick.AddListener(OnRetry);
+        EventManager.OnPlayerDeath += ShowGameOverPanel;
     }
 
     private void OnDisable()
     {
-        EventManager.OnPlayerDeath -= OnPlayerDeath;
-        if (retryButton) retryButton.onClick.RemoveListener(OnRetry);
+        EventManager.OnPlayerDeath -= ShowGameOverPanel;
     }
 
-    private void OnPlayerDeath()
+    private void ShowGameOverPanel()
     {
-        StartCoroutine(ShowGameOverDelayed());
-    }
-
-    private IEnumerator ShowGameOverDelayed()
-    {
-        yield return new WaitForSeconds(showDelay);
-
-        if (gameOverPanel) gameOverPanel.SetActive(true);
+        if (gameOverPanel != null) gameOverPanel.SetActive(true);
         
+        Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-        Time.timeScale = 0f;
     }
 
     private void OnRetry()
