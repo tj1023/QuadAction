@@ -44,6 +44,7 @@ public class SoundManager : MonoBehaviour
         }
 
         _instance = this;
+        transform.SetParent(null); // Must be root for DontDestroyOnLoad
         DontDestroyOnLoad(gameObject);
         
         InitializeAudioSources();
@@ -99,5 +100,33 @@ public class SoundManager : MonoBehaviour
         _bgmSource.clip = clip;
         _bgmSource.volume = bgmVolume * masterVolume;
         _bgmSource.Play();
+    }
+
+    // --- Settings UI Methods ---
+    
+    public void SetMasterVolume(float volume)
+    {
+        masterVolume = Mathf.Clamp01(volume);
+        UpdateAllVolumes();
+    }
+
+    public void SetBgmVolume(float volume)
+    {
+        bgmVolume = Mathf.Clamp01(volume);
+        if (_bgmSource != null) _bgmSource.volume = bgmVolume * masterVolume;
+    }
+
+    public void SetSfxVolume(float volume)
+    {
+        sfxVolume = Mathf.Clamp01(volume);
+        // Note: sfxSource volume only affects the base volume for the *next* PlayOneShot
+        // UI volume uses the same logic.
+    }
+
+    private void UpdateAllVolumes()
+    {
+        if (_bgmSource != null) _bgmSource.volume = bgmVolume * masterVolume;
+        // SFX and UI volumes are multiplicative inside PlayOneShot, 
+        // they will naturally use the updated master/sfx/ui fields on the next play call.
     }
 }

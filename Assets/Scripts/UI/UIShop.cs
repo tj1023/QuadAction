@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class UIShop : MonoBehaviour
+public class UIShop : MonoBehaviour, IPopupUI
 {
     [Header("UI References")]
     [SerializeField] private GameObject panel;
@@ -44,14 +44,6 @@ public class UIShop : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        if (panel.activeSelf && Input.GetKeyDown(KeyCode.Escape))
-        {
-            Close();
-        }
-    }
-
     public void Open(GameObject player, Transform spawnPoint, ShopType shopType,
         string defaultDialogue, string purchaseDialogue, string failDialogue)
     {
@@ -69,15 +61,21 @@ public class UIShop : MonoBehaviour
         // 상점 열린 동안 플레이어 입력 비활성화
         if (_player.TryGetComponent(out PlayerController controller))
             controller.SetInputEnabled(false);
+            
+        if (UIManager.Instance != null)
+            UIManager.Instance.PushUI(this);
     }
 
-    private void Close()
+    public void Close()
     {
         panel.SetActive(false);
 
         // 플레이어 입력 다시 활성화
         if (_player && _player.TryGetComponent(out PlayerController controller))
             controller.SetInputEnabled(true);
+            
+        if (UIManager.Instance != null)
+            UIManager.Instance.PopUI(this);
     }
 
     private void UpdatePriceTexts()
