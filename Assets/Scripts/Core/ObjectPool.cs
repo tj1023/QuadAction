@@ -92,19 +92,23 @@ public class ObjectPool : MonoBehaviour
         int key = prefab.GetInstanceID();
         PoolID poolID;
 
-        if (_pools.TryGetValue(key, out var queue) && queue.Count > 0)
+        if (_pools.TryGetValue(key, out var queue))
         {
-            poolID = queue.Dequeue();
-            GameObject obj = poolID.gameObject;
-            
-            if (obj != null)
+            while (queue.Count > 0)
             {
-                obj.transform.SetPositionAndRotation(position, rotation);
-                obj.SetActive(true);
+                poolID = queue.Dequeue();
                 
-                // 활성 목록에 등록 (Release 시 조회용 - GetComponent 회피)
-                _activeObjects[obj.GetInstanceID()] = poolID;
-                return obj;
+                // 풀에 있던 객체가 외부 요인으로 파괴되었을 수 있으므로 null 체크
+                if (poolID != null && poolID.gameObject != null)
+                {
+                    GameObject obj = poolID.gameObject;
+                    obj.transform.SetPositionAndRotation(position, rotation);
+                    obj.SetActive(true);
+                    
+                    // 활성 목록에 등록 (Release 시 조회용 - GetComponent 회피)
+                    _activeObjects[obj.GetInstanceID()] = poolID;
+                    return obj;
+                }
             }
         }
 
@@ -114,6 +118,38 @@ public class ObjectPool : MonoBehaviour
         
         _activeObjects[newObj.GetInstanceID()] = poolID;
         return newObj;
+    }
+
+    /// <summary>
+    /// 씬 전환 시 등 풀 전체를 초기화하고 모든 자원을 해제합니다.
+    /// 파괴되지 않고 남아있는 풀링된 객체들도 모두 파괴됩니다.
+    /// </summary>
+    private void Clear()
+    {
+        _activeObjects.Clear();
+        
+        foreach (var kvp in _pools)
+        {
+            Queue<PoolID> queue = kvp.Value;
+            while (queue.Count > 0)
+            {
+                PoolID poolID = queue.Dequeue();
+                if (poolID != null && poolID.gameObject != null)
+                {
+                    Destroy(poolID.gameObject);
+                }
+            }
+        }
+        _pools.Clear();
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            Clear();
+            Instance = null;
+        }
     }
 
     /// <summary>
@@ -174,17 +210,4 @@ public struct PoolItem
 public class PoolID : MonoBehaviour
 {
     [HideInInspector] public int prefabID;
-}
-
-/// <summary>
-/// GameObject에 PoolID 컴포넌트를 안전하게 가져오거나 추가하는 확장 메서드
-/// </summary>
-public static class PoolExtensions
-{
-    public static PoolID GetOrAddPoolID(this GameObject obj)
-    {
-        if (!obj.TryGetComponent(out PoolID poolID))
-            poolID = obj.AddComponent<PoolID>();
-        return poolID;
-    }
 }

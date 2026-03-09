@@ -1,4 +1,6 @@
 using System;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// 전역 이벤트 버스(Event Bus)로, 시스템 간 결합도를 낮추기 위해 Observer 패턴을 적용합니다.
@@ -7,6 +9,33 @@ using System;
 /// </summary>
 public static class EventManager
 {
+    static EventManager()
+    {
+        SceneManager.sceneUnloaded += _ => Clear();
+    }
+
+    /// <summary>
+    /// 씬 전환 시 등 구독 해제가 누락된 경우를 대비해,
+    /// 모든 정적 Action 델리게이트를 초기화하여 메모리 누수를 방지
+    /// </summary>
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    public static void Clear()
+    {
+        OnHpChanged = null;
+        OnPlayerHit = null;
+        OnPlayerDeath = null;
+        OnMoneyChanged = null;
+        OnWeaponAdded = null;
+        OnWeaponEquipped = null;
+        OnWeaponRemoved = null;
+        OnAmmoChanged = null;
+        OnBossAppeared = null;
+        OnBossHpChanged = null;
+        OnBossDied = null;
+        OnEnemyDied = null;
+        OnStageChanged = null;
+    }
+
     #region Player Events
 
     /// <summary>플레이어 HP 변경 시 발행. (currentHp, maxHp)</summary>
