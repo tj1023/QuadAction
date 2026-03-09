@@ -90,7 +90,7 @@ public class ObjectPool : MonoBehaviour
     public GameObject Get(GameObject prefab, Vector3 position, Quaternion rotation)
     {
         int key = prefab.GetInstanceID();
-        PoolID poolID = null;
+        PoolID poolID;
 
         if (_pools.TryGetValue(key, out var queue) && queue.Count > 0)
         {
