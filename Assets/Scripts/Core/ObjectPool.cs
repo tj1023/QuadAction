@@ -63,9 +63,13 @@ public class ObjectPool : MonoBehaviour
             _pools[key] = queue;
         }
 
+        // 프리팹을 잠시 비활성화하여 생성 시 OnEnable이 호출되는 것을 방지
+        bool wasActive = prefab.activeSelf;
+        prefab.SetActive(false);
+
         for (int i = 0; i < count; i++)
         {
-            if (queue.Count >= maxCapacity) break; // 최대 유지 개수 초과 방지
+            if (queue.Count >= maxCapacity) break;
 
             GameObject newObj = Instantiate(prefab, transform);
             PoolID poolID = newObj.AddComponent<PoolID>();
@@ -74,6 +78,9 @@ public class ObjectPool : MonoBehaviour
             newObj.SetActive(false);
             queue.Enqueue(poolID);
         }
+
+        // 프리팹 상태 복구
+        prefab.SetActive(wasActive);
     }
 
     /// <summary>

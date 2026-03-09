@@ -350,7 +350,7 @@ MonoBehaviour:
   - {fileID: 26770629}
   - {fileID: 411776159}
   - {fileID: 489083073}
-  baseDifficulty: 5
+  baseDifficulty: 1000
   difficultyPerStage: 3
   nextStageBeacon: {fileID: 257273287}
   shopObject: {fileID: 199239709}
@@ -11126,8 +11126,8 @@ MonoBehaviour:
     count: 100
   - prefab: {fileID: 8094185768026117911, guid: 15e89cf230278aa4c8b1e5e9c8ab176d, type: 3}
     count: 10
-  - prefab: {fileID: 7411650305208700628, guid: 31fde7d6a71639b43a21093633a41f37, type: 3}
-    count: 0
+  - prefab: {fileID: 547435428816858648, guid: ee8f2d17ced4b1d46a63d478fa212417, type: 3}
+    count: 10
 --- !u!4 &1872275743 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5657882665412638405, guid: eea71867d65907045a92d15670981d45, type: 3}
