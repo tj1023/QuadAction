@@ -11102,6 +11102,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f461917eb90973d4c82d25c7df0b608d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectPool
+  maxCapacity: 200
+  preWarmItems:
+  - prefab: {fileID: 4974424376935976781, guid: c5e6b76ff08053f4cbc0fac6307568d1, type: 3}
+    count: 100
+  - prefab: {fileID: 4304951534380598487, guid: 108965eeeffb60943a30e3bad928cbe4, type: 3}
+    count: 100
+  - prefab: {fileID: 7412345771149322367, guid: 673391ffcfbf8c741b57023ae4bb2c02, type: 3}
+    count: 100
+  - prefab: {fileID: 4800879114054196035, guid: 370a2d7ff5467eb40aa9feee58431357, type: 3}
+    count: 100
+  - prefab: {fileID: 7411650305208700628, guid: 31fde7d6a71639b43a21093633a41f37, type: 3}
+    count: 100
+  - prefab: {fileID: 15451565628805861, guid: b0899d28d9b798047bf1655273cf53cb, type: 3}
+    count: 100
+  - prefab: {fileID: 338311277803509061, guid: d8bea401c859cba419e1050a4638764a, type: 3}
+    count: 100
+  - prefab: {fileID: 4496288406305556483, guid: f7be7581da9ea144698263679800a699, type: 3}
+    count: 100
+  - prefab: {fileID: 8273922759160267363, guid: 3db1a917c9adedf47a6fbe9a56d02151, type: 3}
+    count: 100
+  - prefab: {fileID: 2067688833408640663, guid: 3ab03013743c84d40b0907378f0a5076, type: 3}
+    count: 100
+  - prefab: {fileID: 8094185768026117911, guid: 15e89cf230278aa4c8b1e5e9c8ab176d, type: 3}
+    count: 10
+  - prefab: {fileID: 7411650305208700628, guid: 31fde7d6a71639b43a21093633a41f37, type: 3}
+    count: 0
 --- !u!4 &1872275743 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5657882665412638405, guid: eea71867d65907045a92d15670981d45, type: 3}
